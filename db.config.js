@@ -3,9 +3,9 @@ const mysql = require('mysql');
 export const dbConn = mysql.createConnection({
   host     : 'remotemysql.com',
   port : 3306,
-  user     : 'gqboZWghHT',
-  password : 'txSrPqeUWE',
-  database : 'gqboZWghHT'
+  user : 'CDbfPZXSdu',
+  password : 'tUXEN24sv3',
+  database : 'CDbfPZXSdu'
 });
 dbConn.connect(function(err) {
   if (err) throw err;
