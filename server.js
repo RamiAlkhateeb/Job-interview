@@ -20,16 +20,16 @@ app.post('/checkname', function(req, res){
 
 app.get('/posts', function(req, res) {
 
-    // res.json({"success": true});
-    db.query("select * from test", function(err , result){
-        if(err) {
-            console.log("error: ", err);
-            res.json({"nooooo": true});
-          }
-          else{
-              res.json(res)
-          }
-    })
+    res.json({"success": true});
+    // db.query("select * from test", function(err , result){
+    //     if(err) {
+    //         console.log("error: ", err);
+    //         res.json({"nooooo": true});
+    //       }
+    //       else{
+    //           res.json(res)
+    //       }
+    // })
 
 });
 
