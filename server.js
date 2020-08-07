@@ -20,7 +20,8 @@ app.get('/checkname', function(req, res){
             res.json({"nooooo": true});
           }
           else{
-              res.json(res)
+            console.log("resssssssss: ", res);
+            res.json(result)
           }
     })
 });
