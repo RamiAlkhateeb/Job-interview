@@ -54,6 +54,24 @@ app.get('/reqs', function(req, res){
      })
  });
 
+ app.post('/postreq',function(req,res){
+   var reqinfo = {
+     phone : req.body.phone,
+     age : req.body.age,
+     city : req.body.city
+   }
+
+   db.query("insert into Requests set ?" , reqinfo,function(err , result){
+     if(err){
+      console.log("error: ", err);
+      res.json({"nooooo": true});
+     }else{
+      res.send('Saved succesfully');
+      res.send(reqinfo)
+     }
+   })
+ })
+
 app.get('/posts', function(req, res) {
 
     res.json({"success": true});
