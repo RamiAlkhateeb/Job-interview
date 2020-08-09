@@ -26,6 +26,34 @@ app.get('/checkname', function(req, res){
     })
 });
 
+app.get('/reqs', function(req, res){
+  //res.json({"success": true});
+     db.query("select * from Requests", function(err , result){
+         if(err) {
+             console.log("error: ", err);
+             res.json({"nooooo": true});
+           }
+           else{
+             console.log("requestsssss: ", res);
+             res.json(result)
+           }
+     })
+ });
+
+ app.get('/responses', function(req, res){
+  //res.json({"success": true});
+     db.query("select * from Responses", function(err , result){
+         if(err) {
+             console.log("error: ", err);
+             res.json({"nooooo": true});
+           }
+           else{
+             console.log("Responsesssss: ", res);
+             res.json(result)
+           }
+     })
+ });
+
 app.get('/posts', function(req, res) {
 
     res.json({"success": true});
