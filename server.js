@@ -12,29 +12,16 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(cors());
 
-app.get('/checkname', function(req, res){
- //res.json({"success": true});
-    db.query("select * from test", function(err , result){
-        if(err) {
-            console.log("error: ", err);
-            res.json({"nooooo": true});
-          }
-          else{
-            console.log("resssssssss: ", res);
-            res.json(result)
-          }
-    })
-});
 
 app.get('/reqs', function(req, res){
   //res.json({"success": true});
      db.query("select * from Requests", function(err , result){
          if(err) {
              console.log("error: ", err);
-             res.json({"nooooo": true});
+             res.json({"error": true});
            }
            else{
-             console.log("requestsssss: ", res);
+             console.log("requests : ", res);
              res.json(result)
            }
      })
@@ -45,10 +32,10 @@ app.get('/reqs', function(req, res){
      db.query("select * from Responses", function(err , result){
          if(err) {
              console.log("error: ", err);
-             res.json({"nooooo": true});
+             res.json({"error": true});
            }
            else{
-             console.log("Responsesssss: ", res);
+             console.log("responses : ", res);
              res.json(result)
            }
      })
@@ -56,27 +43,40 @@ app.get('/reqs', function(req, res){
 
  app.post('/postreq',function(req,res){
    var reqinfo = {
-     phone : req.body.phone,
-     age : req.body.age,
-     city : req.body.city
+     Number : req.body.phone,
+     Age : req.body.age,
+     City : req.body.city
    }
 
-   db.query("insert into Requests set ?" , reqinfo,function(err , result){
+   db.query("insert into Requests (Number , City , Age , Area , Status) values(?,?,?,?,?)" , [req.body.phone ,req.body.city, req.body.age , req.body.area, req.body.status ],function(err , result){
      if(err){
+      console.log("there is an error")
       console.log("error: ", err);
-      res.json({"nooooo": true});
+      res.json({"error": true});
      }else{
+      console.log("results : ",result)
       res.send('Saved succesfully');
-      res.send(reqinfo)
+     // res.send(reqinfo)
      }
    })
  })
 
-app.get('/posts', function(req, res) {
 
-    res.json({"success": true});
+ app.post('/postres',function(req,res){
+  
 
-});
+  db.query("insert into Responses (Number , City , Count , Area ) values(?,?,?,?)" , [req.body.phone ,req.body.city, req.body.count , req.body.area ],function(err , result){
+    if(err){
+     console.log("there is an error")
+     console.log("error: ", err);
+     res.json({"error": true});
+    }else{
+     console.log("results : ",result)
+     res.send('Saved succesfully');
+    // res.send(reqinfo)
+    }
+  })
+})
 
 app.listen(process.env.PORT || 8080);
 
