@@ -41,6 +41,20 @@ app.get('/reqs', function(req, res){
      })
  });
 
+ app.get('/matches', function(req, res){
+  //res.json({"success": true});
+     db.query("select * from Responses where City like ?",[req.body.city], function(err , result){
+         if(err) {
+             console.log("error: ", err);
+             res.json({"error": true});
+           }
+           else{
+             console.log("responses : ", res);
+             res.json(result)
+           }
+     })
+ });
+
  app.post('/postreq',function(req,res){
    var reqinfo = {
      Number : req.body.phone,
