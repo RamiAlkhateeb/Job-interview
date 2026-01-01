@@ -60,11 +60,11 @@
 
 ## ما هو  (Dependency Injection) ولماذا يُستخدم في .NET Core؟
 
+تخيل أنك تبني منزلاً أثاثه ملتصق بالأرضية. إذا أردت تغيير الأريكة، عليك هدم غرفة المعيشة. هذا ما يحدث عندما تُضمّن التبعيات بشكل ثابت (باستخدام الكلمة المفتاحية new) داخل صفوفك البرمجية.
+
 هو نمط تصميم يُستخدم لتحقيق "عكس التحكم" (IoC). فهو يسمح لك بحقن الخدمات ( dependencies ) داخل الصف بدلاً من إنشائها داخل الصف نفسه. هذا يجعل الكود أكثر قابلية للاختبار، والصيانة، وأقل ارتباطاً (Loosely coupled).
 
-![img](https://miro.medium.com/v2/resize:fit:720/format:webp/1*3puSpLIAZlAvSn0qIT_X6A.jpeg)
-
-![img](https://miro.medium.com/v2/resize:fit:640/format:webp/1*UBi-WDVkUomOJWafA5BkYg.jpeg)
+![img](https://substackcdn.com/image/fetch/$s_!vOGj!,w_512,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa79a5cc7-10c8-410e-a0e0-da1a4d44070c_1024x559.png)
 
 ## اشرح الغرض من الكلمات المفتاحية `async` و `await`.
 
