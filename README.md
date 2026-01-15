@@ -85,6 +85,8 @@
 
 وفي التعريف IEnumerable يسحب كل البيانات من قاعدة البيانات إلى الذاكرة ثم يقوم بتصفيتها (فلترة عند العميل). أما IQueryable فيقوم ببناء جملة SQL وينفذ التصفية داخل قاعدة البيانات (فلترة عند الخادم)، وهو أفضل للأداء مع البيانات الضخمة.
 
+![img](https://substackcdn.com/image/fetch/$s_!ibCk!,w_1136,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Faf89b2e6-0a44-4521-a448-36d83a28c3d6_2816x1361.png)
+
 ## 7. هل يمكنك شرح مبادئ SOLID؟
 تخيل البناء بمكعبات "ليغو". إذا اتبعت القواعد (SOLID)، كل قطعة تركب مكانها، ويمكنك تغيير السقف دون كسر الأرضية. إذا ألصقت قطعاً عشوائية ببعضها (تصميم سيء)، فلن تستطيع تعديل أي شيء لاحقاً.
 
@@ -114,6 +116,8 @@
 ثانياً Scoped: يتم إنشاء نسخة واحدة لكل طلب HTTP (لكل مستخدم في تلك اللحظة). 
 
 ثالثاً Singleton: يتم إنشاء نسخة واحدة فقط عند بدء التطبيق وتستخدمها كل الطلبات طوال الوقت.
+
+![img](https://substackcdn.com/image/fetch/$s_!2H_A!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7dc61af8-67a2-42ee-b12b-cf32b1afa56f_2816x1536.png)
 
 ## 11. متى يجب عليك استخدام Dictionary بدلاً من List؟
 البحث في List يشبه قراءة دفتر ملاحظات صفحة بصفحة حتى تجد الاسم. البحث في Dictionary يشبه استخدام دليل هاتف منظم، حيث تذهب فوراً لحرف "س" لتجد "سعيد".
