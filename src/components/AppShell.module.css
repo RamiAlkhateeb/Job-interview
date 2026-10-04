@@ -1,0 +1,82 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-inline-end: 1px solid var(--rule);
+  padding: 64px 18px 28px 18px;
+}
+.brand {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 4px;
+}
+.brandSub {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 22px;
+  line-height: 1.35;
+}
+.sidebar nav a {
+  display: block;
+  padding: 8px 10px;
+  margin-bottom: 2px;
+  border-radius: 6px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.sidebar nav a:hover {
+  background: var(--paper-2);
+  color: var(--ink);
+}
+.sidebar nav a.current {
+  background: var(--teal-bg);
+  color: var(--teal);
+  font-weight: 700;
+}
+.sidebarHint {
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 60px 56px 100px 56px;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+  .main {
+    padding: 76px 20px 80px 20px;
+  }
+}
+
+@media print {
+  .shell {
+    display: block;
+    max-width: 100%;
+  }
+  .sidebar {
+    display: none;
+  }
+  .main {
+    padding: 0;
+  }
+}

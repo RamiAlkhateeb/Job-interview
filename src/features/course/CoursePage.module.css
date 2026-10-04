@@ -1,0 +1,95 @@
+.hero {
+  max-width: 640px;
+  margin-bottom: 28px;
+}
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.02em;
+}
+.hero p {
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  margin: 0;
+}
+.group {
+  max-width: 640px;
+}
+.groupLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 22px 0 6px 4px;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 8px;
+}
+.row:hover {
+  background: var(--paper-2);
+}
+.row a {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+}
+.soon {
+  color: var(--ink-faint);
+}
+.badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--paper-2);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.bar {
+  display: inline-block;
+  width: 64px;
+  height: 6px;
+  border-radius: 100px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.bar > span {
+  display: block;
+  height: 100%;
+  background: var(--teal);
+}
+.reset {
+  margin-top: 32px;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 100px;
+  padding: 7px 16px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.reset:hover {
+  color: var(--teal);
+  border-color: var(--teal);
+}

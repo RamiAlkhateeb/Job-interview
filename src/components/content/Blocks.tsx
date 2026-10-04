@@ -1,0 +1,108 @@
+import type { Block } from '../../content/types'
+import { resolveAssetPath, resolveHtmlAssetPaths } from '../../content/resolveAssetPath'
+import { useLocalized } from '../../content/useLocalized'
+import { Exercise } from '../../features/quiz/Exercise'
+import { CodeBlock } from './CodeBlock'
+import { Tabs } from './Tabs'
+import styles from './content.module.css'
+
+export function Blocks({ blocks }: { blocks: Block[] }) {
+  const t = useLocalized()
+
+  return (
+    <>
+      {blocks.map((block, i) => {
+        switch (block.type) {
+          case 'html':
+            return <div key={i} dangerouslySetInnerHTML={{ __html: resolveHtmlAssetPaths(t(block.html)) }} />
+
+          case 'objectives':
+            return (
+              <div key={i} className={styles.objectives}>
+                <div className={styles.objLabel}>{t(block.label)}</div>
+                <ul>
+                  {block.items.map((item, j) => (
+                    <li key={j}>{t(item)}</li>
+                  ))}
+                </ul>
+              </div>
+            )
+
+          case 'box':
+            return (
+              <div key={i} className={`${styles.box} ${styles[block.variant]}`}>
+                <span className={styles.boxLabel}>{t(block.label)}</span>
+                <div dangerouslySetInnerHTML={{ __html: resolveHtmlAssetPaths(t(block.html)) }} />
+              </div>
+            )
+
+          case 'takeaways':
+            return (
+              <div key={i} className={styles.takeaways}>
+                <span className={styles.boxLabel}>{t(block.label)}</span>
+                <ul>
+                  {block.items.map((item, j) => (
+                    <li key={j}>{t(item)}</li>
+                  ))}
+                </ul>
+              </div>
+            )
+
+          case 'code':
+            return <CodeBlock key={i} code={block.code} />
+
+          case 'diagram':
+            return (
+              <figure key={i} className={styles.diagram}>
+                <div className={styles.fig}>{t(block.fig)}</div>
+                <div className={styles.figTitle}>{t(block.title)}</div>
+                <img src={resolveAssetPath(block.src)} alt={block.alt} />
+                <figcaption>{t(block.caption)}</figcaption>
+              </figure>
+            )
+
+          case 'exercise':
+            return <Exercise key={i} questionId={block.questionId} />
+
+          case 'formula':
+            return (
+              <div key={i} className={styles.formula}>
+                <span className={styles.formulaEq}>{block.eq}</span>
+                <span className={styles.formulaNote}>{t(block.note)}</span>
+              </div>
+            )
+
+          case 'table':
+            return (
+              <div key={i} className={styles.tableScroll}>
+                <table>
+                  <thead>
+                    <tr>
+                      {block.headers.map((h, j) => (
+                        <th key={j}>{t(h)}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {block.rows.map((row, r) => (
+                      <tr key={r}>
+                        {row.map((cell, c) => (
+                          <td key={c} dangerouslySetInnerHTML={{ __html: t(cell) }} />
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+
+          case 'tabs':
+            return <Tabs key={i} tabs={block.tabs} />
+
+          default:
+            return null
+        }
+      })}
+    </>
+  )
+}

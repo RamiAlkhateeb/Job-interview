@@ -1,0 +1,68 @@
+/* Design tokens — ported from ../course/_shared/styles/week.css. Keep colors/spacing in sync
+   with the old site until it is fully retired. */
+:root {
+  --paper: #fdfbf7;
+  --paper-2: #f4f0e6;
+  --paper-3: #ede7d9;
+  --ink: #1c2b3a;
+  --ink-soft: #55606e;
+  --ink-faint: #8a93a0;
+  --rule: #ded6c4;
+  --surface: #fff;
+  --teal: #0e6f7e;
+  --teal-bg: #e3f1f3;
+  --lav: #6b4c9a;
+  --lav-bg: #efe9f7;
+  --amber: #9a6b00;
+  --amber-bg: #fbf0d9;
+  --red: #a8322a;
+  --red-bg: #fbe9e7;
+  --green: #1f6b47;
+  --green-bg: #e4f2ea;
+  --sidebar-w: 260px;
+}
+
+html[data-theme='dark'] {
+  --paper: #12181f;
+  --paper-2: #1b232c;
+  --paper-3: #212b35;
+  --ink: #edeff2;
+  --ink-soft: #aeb6c2;
+  --ink-faint: #7c8797;
+  --rule: #2b3542;
+  --surface: #1b232c;
+  --teal: #3fb8c9;
+  --teal-bg: #123138;
+  --lav: #b79ee8;
+  --lav-bg: #241c38;
+  --amber: #e8b23d;
+  --amber-bg: #3a2e12;
+  --red: #e86a5c;
+  --red-bg: #3a1f1c;
+  --green: #59c08b;
+  --green-bg: #12291f;
+}
+
+/* Printed pages always use the light palette, whatever the on-screen theme is. */
+@media print {
+  html[data-theme='dark'] {
+    --paper: #fdfbf7;
+    --paper-2: #f4f0e6;
+    --paper-3: #ede7d9;
+    --ink: #1c2b3a;
+    --ink-soft: #55606e;
+    --ink-faint: #8a93a0;
+    --rule: #ded6c4;
+    --surface: #fff;
+    --teal: #0e6f7e;
+    --teal-bg: #e3f1f3;
+    --lav: #6b4c9a;
+    --lav-bg: #efe9f7;
+    --amber: #9a6b00;
+    --amber-bg: #fbf0d9;
+    --red: #a8322a;
+    --red-bg: #fbe9e7;
+    --green: #1f6b47;
+    --green-bg: #e4f2ea;
+  }
+}

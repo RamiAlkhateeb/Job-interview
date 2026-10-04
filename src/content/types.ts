@@ -1,0 +1,55 @@
+export type Lang = 'en' | 'ar'
+
+/** Text with an English original and an Arabic translation; ar falls back to en. */
+export interface Localized {
+  en: string
+  ar?: string
+}
+
+export interface Question {
+  /** Stable ID, e.g. "w01-q003". Never change once shipped: progress rows reference it. */
+  id: string
+  weekId: string
+  topic?: string
+  prompt: Localized
+  options: Localized[]
+  /** Index into `options` */
+  answer: number
+}
+
+export type Block =
+  | { type: 'html'; html: Localized }
+  | { type: 'objectives'; label: Localized; items: Localized[] }
+  | { type: 'takeaways'; label: Localized; items: Localized[] }
+  | { type: 'box'; variant: 'analogy' | 'mistake' | 'keypoint' | 'example'; label: Localized; html: Localized }
+  | { type: 'code'; code: string; lang?: string }
+  | { type: 'diagram'; fig: Localized; title: Localized; src: string; alt: string; caption: Localized }
+  | { type: 'exercise'; questionId: string }
+  | { type: 'formula'; eq: string; note: Localized }
+  | { type: 'table'; headers: Localized[]; rows: Localized[][] }
+  | { type: 'tabs'; tabs: { label: Localized; blocks: Block[] }[] }
+
+export interface Section {
+  id: string
+  /** Short sidebar label, e.g. "Choosing your sample" (vs. the fuller <h2> text in headingHtml) */
+  navLabel: Localized
+  sectionLabel: Localized
+  timeEst?: Localized
+  /** Heading + standfirst markup, e.g. "<h2>...</h2><p class='standfirst'>...</p>" */
+  headingHtml: Localized
+  blocks: Block[]
+}
+
+/** One module of a course (the type keeps its original "Week" name; a course is free to call them modules). */
+export interface Week {
+  id: string
+  courseId: string
+  order: number
+  cover: {
+    kicker: Localized
+    titleHtml: Localized
+    timeEstimate: Localized
+  }
+  sections: Section[]
+  questions: Question[]
+}

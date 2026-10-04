@@ -1,0 +1,50 @@
+.hero {
+  max-width: 640px;
+  margin-bottom: 32px;
+}
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.02em;
+}
+.hero p {
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  margin: 0;
+}
+.weeks {
+  max-width: 480px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  max-width: 760px;
+}
+.card {
+  display: block;
+  padding: 20px 22px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+.card:hover {
+  border-color: var(--teal);
+}
+.card h2 {
+  margin: 0 0 6px 0;
+  font-size: 1.15rem;
+}
+.card p {
+  margin: 0 0 14px 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.cardCta {
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 0.9rem;
+}

@@ -1,0 +1,515 @@
+/* Content typography + block styling — ported from ../../../../course/_shared/styles/week.css.
+   Scoped under .content so tag selectors (h2, p, ul…) don't leak past the week page. */
+
+.content section {
+  margin-bottom: 52px;
+  scroll-margin-top: 24px;
+  max-width: 720px;
+}
+.secHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.secNum {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: var(--teal-bg);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+.timeEst {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-faint);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.content h2 {
+  font-size: 1.85rem;
+  line-height: 1.2;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+.content :global(.standfirst) {
+  font-size: 1.08rem;
+  color: var(--ink-soft);
+  margin: 0 0 18px 0;
+}
+.content h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 28px 0 10px 0;
+}
+.content p {
+  margin: 0 0 15px 0;
+}
+.content ul,
+.content ol {
+  margin: 0 0 15px 0;
+  padding-inline-start: 22px;
+}
+.content li {
+  margin-bottom: 8px;
+}
+.content strong {
+  font-weight: 700;
+}
+.content code {
+  font-family: 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  color: var(--teal);
+  background: var(--teal-bg);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.objectives {
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 0 0 22px 0;
+}
+.objLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+.objectives ul {
+  margin: 0;
+  padding-inline-start: 20px;
+}
+.objectives li {
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+}
+.objectives li:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- KEY TAKEAWAYS ---------- */
+.takeaways {
+  background: var(--paper-3);
+  border: 1.5px solid var(--ink);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 22px 0;
+}
+.takeaways ul {
+  margin: 0;
+  padding-inline-start: 20px;
+}
+.takeaways li {
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+.takeaways li:last-child {
+  margin-bottom: 0;
+}
+
+.box {
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin: 20px 0;
+  font-size: 0.98rem;
+}
+.box p:last-child {
+  margin-bottom: 0;
+}
+.boxLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.analogy {
+  background: var(--lav-bg);
+  border-inline-start: 5px solid var(--lav);
+}
+.analogy .boxLabel {
+  color: var(--lav);
+}
+.mistake {
+  background: var(--red-bg);
+  border-inline-start: 5px solid var(--red);
+}
+.mistake .boxLabel {
+  color: var(--red);
+}
+.keypoint {
+  background: var(--amber-bg);
+  border-inline-start: 5px solid var(--amber);
+}
+.keypoint .boxLabel {
+  color: var(--amber);
+}
+.example {
+  background: var(--teal-bg);
+  border-inline-start: 5px solid var(--teal);
+}
+.example .boxLabel {
+  color: var(--teal);
+}
+
+.codeBlock {
+  position: relative;
+  background: #1c2b3a;
+  border-radius: 10px;
+  margin: 20px 0;
+  direction: ltr;
+  text-align: start;
+  overflow: hidden;
+}
+.codeBlock pre {
+  margin: 0;
+  padding: 18px 76px 18px 18px;
+  overflow-x: auto;
+}
+.codeBlock code {
+  font-family: 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #e3f1f3;
+  white-space: pre;
+  background: none;
+  padding: 0;
+}
+.codeCopyBtn {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #e3f1f3;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 5px 11px;
+  border-radius: 100px;
+  cursor: pointer;
+}
+.codeCopyBtn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+.codeCopyBtn.copied {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+.diagram {
+  border: 1px solid #ded6c4;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 18px 16px 18px;
+  margin: 24px 0;
+  direction: ltr;
+}
+.diagram .fig {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b4c9a;
+  margin-bottom: 6px;
+  text-align: start;
+}
+.diagram .figTitle {
+  font-weight: 700;
+  font-size: 1.08rem;
+  margin-bottom: 14px;
+  text-align: start;
+  color: #1c2b3a;
+}
+.diagram img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.diagram figcaption {
+  font-size: 0.95rem;
+  color: #55606e;
+  border-top: 1px solid #ded6c4;
+  padding-top: 11px;
+  margin-top: 14px;
+  text-align: start;
+}
+
+.exercise {
+  background: var(--surface);
+  border: 2px dashed var(--teal);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin: 22px 0;
+}
+.exerciseHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.exerciseHead .boxLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.exerciseQ {
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.exerciseOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.exerciseOptions label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.exerciseOptions input[type='radio'] {
+  margin-top: 3px;
+  accent-color: var(--teal);
+  flex-shrink: 0;
+}
+.exerciseSubmit {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.exerciseSubmit:hover {
+  opacity: 0.88;
+}
+.exerciseSubmit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.exerciseFeedback {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.correct {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.incorrect {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.cover {
+  padding-bottom: 36px;
+  border-bottom: 2px solid var(--rule);
+  margin-bottom: 36px;
+}
+.cover .kicker {
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.cover h1 {
+  font-size: 2.6rem;
+  line-height: 1.15;
+  font-weight: 800;
+  margin: 0 0 14px 0;
+  letter-spacing: -0.02em;
+}
+.cover h1 em {
+  font-style: normal;
+  color: var(--teal);
+  display: block;
+}
+.cover :global(.lede) {
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  max-width: 640px;
+  margin: 0;
+}
+.totalTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  padding: 8px 4px;
+}
+.coverTools {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.toolBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 100px;
+  cursor: pointer;
+}
+.toolBtn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* ---------- FORMULA (no equivalent in the original CSS — new, styled to match the code/box family) ---------- */
+.formula {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+.formulaEq {
+  font-family: 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--teal);
+  direction: ltr;
+}
+.formulaNote {
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- TABLES ---------- */
+.tableScroll {
+  overflow-x: auto;
+  margin: 18px 0;
+}
+.tableScroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.tableScroll th {
+  text-align: start;
+  background: var(--paper-2);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 10px;
+  border-bottom: 2px solid var(--rule);
+}
+.tableScroll td {
+  padding: 10px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+/* ---------- TABS ---------- */
+.tabs {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 22px 0;
+  background: var(--surface);
+}
+.tabHeads {
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-2);
+}
+.tabHeads button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 13px 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-family: inherit;
+  border-bottom: 3px solid transparent;
+}
+.tabHeads button.tabActive {
+  color: var(--teal);
+  border-bottom-color: var(--teal);
+  background: var(--surface);
+}
+.tabPanel {
+  padding: 20px;
+}
+.tabPanelHidden {
+  display: none;
+}
+
+@media print {
+  .coverTools,
+  .tabHeads,
+  .codeCopyBtn {
+    display: none;
+  }
+  /* The on-screen tab switcher only shows one panel; print shows all, labelled. */
+  .tabPanelHidden {
+    display: block;
+  }
+  .tabPanel {
+    border-top: 1px solid var(--rule);
+  }
+  .tabPanel::before {
+    content: attr(data-print-label);
+    display: block;
+    font-weight: 800;
+    color: var(--teal);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-bottom: 8px;
+  }
+}
