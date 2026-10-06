@@ -10,7 +10,7 @@ Vite + React + TypeScript study app for tech job interviews. Open to guests: **n
 
 ## Layout
 - `src/content/courses.ts`: course registry. Each course is `src/content/courses/<id>/index.ts` + one file per module.
-- `src/features/<name>/`: feature code (`course`, `weeks`, `quiz`, `progress`, `home`, `theme`); shared UI in `src/components/`.
+- `src/features/<name>/`: feature code (`course`, `weeks`, `quiz`, `lesson`, `progress`, `home`, `theme`); shared UI in `src/components/`.
 - `solutions/`: the author's practice solutions (C#/Python/JS/SQL/Java). Not part of the app build.
 - `legacy/`: old unrelated backend files, kept for reference only.
 - `docs/content-sources/README.ar.md`: the original Arabic README the first modules were migrated from.

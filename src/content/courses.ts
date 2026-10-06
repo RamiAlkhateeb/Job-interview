@@ -27,6 +27,7 @@ export const courses: Course[] = [techInterview]
 export const getCourse = (id: string | undefined) => courses.find((c) => c.id === id)
 
 export const moduleHref = (courseId: string, moduleId: string) => `/course/${courseId}/${moduleId}`
+export const lessonHref = (courseId: string, moduleId: string) => `${moduleHref(courseId, moduleId)}/lesson`
 
 /** A course's modules in reading order — used for prev/next navigation. Not-yet-written modules stay
  *  in the list so a "coming soon" nav button can still show their title. */

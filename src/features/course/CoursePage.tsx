@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { getCourse, hasWeek, moduleHref, type Course, type NavItem } from '../../content/courses'
+import { getCourse, hasWeek, lessonHref, moduleHref, type Course, type NavItem } from '../../content/courses'
 import { useLocalized } from '../../content/useLocalized'
 import { useWeek } from '../../content/useWeek'
 import { useProgress } from '../progress/useProgress'
@@ -73,6 +73,11 @@ function ModuleRow({ course, item }: { course: Course; item: NavItem }) {
             <span style={{ width: `${percent}%` }} />
           </span>
           {percent}% · {tUi('quizScore', { correct, answered, total: week.questions.length })}
+          {week.questions.length > 0 && (
+            <Link className={styles.lessonBtn} to={lessonHref(course.id, item.id)}>
+              {tUi('startLesson')}
+            </Link>
+          )}
         </span>
       )}
     </li>
