@@ -7,6 +7,9 @@
 - Content validation tests (unique question IDs, answer ranges, every exercise resolves, Arabic present everywhere).
 - GitHub Actions: CI (PRs/branches) and Pages deploy from `master`; Dependabot; PR template.
 - Duolingo-style **Lesson mode** (`/course/:courseId/:moduleId/lesson`): 8 questions one at a time, instant feedback, score screen; XP (10 per correct, +20 perfect), daily streak (local midnight), Leitner boxes that make lessons favour unseen/missed questions. Streak + XP shown in the top bar.
+- **Card lessons** (sample: Resume & ATS): a module with `layout: 'cards'` opens as one card per idea (split with `cardBreak` blocks), and each section's questions come after its content as quiz cards; finishing gives XP/streak. `?view=page` keeps the one-page view (print/PDF). To convert another module, add `layout: 'cards'` and `cardBreak`s.
+- **Skill path** course page: one banner per unit, round lesson nodes (done ✓ / current ★ / locked 🔒 / soon). A module is done once its card lesson or quiz lesson is finished (`progress.modulesDone`).
+- **Settings** page (`/settings`, ⚙ in the top bar): language, theme (light/dark/system), sound effects (synthesised with Web Audio, no files).
 
 - Business courses (category "Business & finance" on the home page): **Investing Fundamentals** (3 modules), **Personal Finance**, **Accounting Essentials**, **Entrepreneurship**, **Marketing Fundamentals** (1 module each), with "Soon" placeholders for the rest. Shared content helpers in `src/content/helpers.ts`; per-question shuffled option order.
 
@@ -19,7 +22,7 @@ More course ideas: Project management, Negotiation, Business analytics (port fro
 Learning experience
 - **Review-missed mode**: a page that replays only questions answered wrongly (data is already in `progress.answers`).
 - **Spaced repetition** across modules: boxes already exist (`progress.boxes`); add a "Practice" lesson that pulls due questions from every module.
-- **Duolingo next steps**: hearts, daily XP goal, skill-path course page (locked/unlocked nodes), badges, more question types (true/false, fill-in-the-blank, ordering).
+- **Duolingo next steps**: convert more modules to card lessons, hearts, daily XP goal, badges, Duolingo look & feel (palette, bigger type), more question types (true/false, fill-in-the-blank, ordering).
 - **Timed mock quiz**: random N questions across modules with a score screen.
 - **Search** across modules (Pagefind or MiniSearch, built at deploy time).
 - **Per-question explanations** shown after answering; **bookmarks / notes** per section.

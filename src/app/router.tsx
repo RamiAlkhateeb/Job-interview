@@ -27,6 +27,13 @@ export const router = createBrowserRouter(
           },
         },
         {
+          path: 'settings',
+          lazy: async () => {
+            const { SettingsPage } = await import('../features/settings/SettingsPage')
+            return { element: <SettingsPage /> }
+          },
+        },
+        {
           // `moduleId`, not `id`: AppShell keys the sidebar's section list off `id`, and a lesson has no sections.
           path: 'course/:courseId/:moduleId/lesson',
           lazy: async () => {

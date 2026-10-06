@@ -264,3 +264,41 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Card lesson: one card per step, sliding in */
+.card {
+  background: var(--surface);
+  border: 2px solid var(--rule);
+  border-bottom-width: 5px;
+  border-radius: 20px;
+  padding: 24px 26px 10px 26px;
+  animation: cardIn 0.25s ease-out;
+}
+.card h2 {
+  font-size: 1.5rem;
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+}
+.onePage {
+  text-align: center;
+  margin: 18px 0 0 0;
+  font-size: 12.5px;
+}
+.onePage a {
+  color: var(--ink-faint);
+}
+@media (max-width: 520px) {
+  .card {
+    padding: 18px 16px 6px 16px;
+    border-radius: 16px;
+  }
+}

@@ -11,7 +11,7 @@ Vite + React + TypeScript study app with free courses for careers (tech intervie
 ## Layout
 - `src/content/courses.ts`: course registry. Each course is `src/content/courses/<id>/index.ts` + one file per module; `category` (`careers` / `business`) groups it on the home page.
 - `src/content/helpers.ts`: shared content builders (`L`, `section`, `mcq`, `box`, `table`, …).
-- `src/features/<name>/`: feature code (`course`, `weeks`, `quiz`, `lesson`, `progress`, `home`, `theme`); shared UI in `src/components/`.
+- `src/features/<name>/`: feature code (`course`, `weeks`, `quiz`, `lesson`, `progress`, `home`, `settings`); shared UI in `src/components/`.
 - `solutions/`: the author's practice solutions (C#/Python/JS/SQL/Java). Not part of the app build.
 - `legacy/`: old unrelated backend files, kept for reference only.
 - `docs/content-sources/README.ar.md`: the original Arabic README the first modules were migrated from.

@@ -13,6 +13,9 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
     <>
       {blocks.map((block, i) => {
         switch (block.type) {
+          case 'cardBreak':
+            return null
+
           case 'html':
             return <div key={i} dangerouslySetInnerHTML={{ __html: resolveHtmlAssetPaths(t(block.html)) }} />
 

@@ -19,11 +19,20 @@ export interface Progress {
   streak: Streak
   /** questionId -> Leitner box (1 = shaky … MAX_BOX = known); lessons favour low boxes */
   boxes: Record<string, number>
+  /** `${courseId}/${moduleId}` of every module with a finished lesson; drives the course page's skill path */
+  modulesDone: string[]
 }
 
 // Still v1: the lesson fields were added with defaults, so older saved progress parses unchanged.
 const STORAGE_KEY = 'progress:v1'
-const empty: Progress = { answers: {}, sectionsRead: {}, xp: 0, streak: { count: 0, lastDay: '' }, boxes: {} }
+const empty: Progress = {
+  answers: {},
+  sectionsRead: {},
+  xp: 0,
+  streak: { count: 0, lastDay: '' },
+  boxes: {},
+  modulesDone: [],
+}
 
 export const MAX_BOX = 5
 export const XP_PER_CORRECT = 10
@@ -45,6 +54,7 @@ export function parseProgress(raw: string | null): Progress {
         lastDay: typeof streak.lastDay === 'string' ? streak.lastDay : '',
       },
       boxes: isRecord(data.boxes) ? (data.boxes as Progress['boxes']) : {},
+      modulesDone: Array.isArray(data.modulesDone) ? data.modulesDone.filter((k) => typeof k === 'string') : [],
     }
   } catch {
     return empty
@@ -99,9 +109,16 @@ export function recordReview(p: Progress, questionId: string, correct: boolean):
   return { ...p, boxes: { ...p.boxes, [questionId]: correct ? Math.min(box + 1, MAX_BOX) : 1 } }
 }
 
-/** Award a finished lesson's XP and count `today` towards the streak. */
-export function completeLesson(p: Progress, correct: number, total: number, today: string): Progress {
-  return { ...p, xp: p.xp + lessonXp(correct, total), streak: bumpStreak(p.streak, today) }
+/** Award a finished lesson's XP, count `today` towards the streak and mark the module (if given) done. */
+export function completeLesson(
+  p: Progress,
+  correct: number,
+  total: number,
+  today: string,
+  moduleKey?: string,
+): Progress {
+  const modulesDone = moduleKey && !p.modulesDone.includes(moduleKey) ? [...p.modulesDone, moduleKey] : p.modulesDone
+  return { ...p, xp: p.xp + lessonXp(correct, total), streak: bumpStreak(p.streak, today), modulesDone }
 }
 
 /** Up to `size` question ids for a lesson: never-seen and low-box questions first, ties shuffled. */

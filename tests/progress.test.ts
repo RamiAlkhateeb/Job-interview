@@ -14,7 +14,7 @@ import {
   recordReview,
 } from '../src/features/progress/store'
 
-const EMPTY = { answers: {}, sectionsRead: {}, xp: 0, streak: { count: 0, lastDay: '' }, boxes: {} }
+const EMPTY = { answers: {}, sectionsRead: {}, xp: 0, streak: { count: 0, lastDay: '' }, boxes: {}, modulesDone: [] }
 
 describe('progress store helpers', () => {
   it('parses missing or corrupt storage as empty progress', () => {
@@ -28,7 +28,8 @@ describe('progress store helpers', () => {
   })
 
   it('ignores wrongly typed lesson fields', () => {
-    expect(parseProgress(JSON.stringify({ xp: 'lots', streak: [], boxes: null }))).toEqual(EMPTY)
+    expect(parseProgress(JSON.stringify({ xp: 'lots', streak: [], boxes: null, modulesDone: 'x' }))).toEqual(EMPTY)
+    expect(parseProgress(JSON.stringify({ modulesDone: ['a/b', 3] })).modulesDone).toEqual(['a/b'])
   })
 
   it('records the latest answer per question without mutating', () => {
@@ -83,6 +84,13 @@ describe('lesson helpers', () => {
     expect(p.xp).toBe(40)
     expect(p.streak).toEqual({ count: 1, lastDay: '2026-10-06' })
     expect(completeLesson(p, 5, 5, '2026-10-06').xp).toBe(110)
+  })
+
+  it('marks the lesson module done once', () => {
+    const p = completeLesson(parseProgress(null), 1, 2, '2026-10-06', 'tech-interview/resume')
+    expect(p.modulesDone).toEqual(['tech-interview/resume'])
+    expect(completeLesson(p, 2, 2, '2026-10-07', 'tech-interview/resume').modulesDone).toBe(p.modulesDone)
+    expect(completeLesson(p, 2, 2, '2026-10-07').modulesDone).toEqual(['tech-interview/resume'])
   })
 
   it('moves Leitner boxes up on a right answer (capped) and back to 1 on a wrong one', () => {

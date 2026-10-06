@@ -28,6 +28,8 @@ export type Block =
   | { type: 'formula'; eq: string; note: Localized }
   | { type: 'table'; headers: Localized[]; rows: Localized[][] }
   | { type: 'tabs'; tabs: { label: Localized; blocks: Block[] }[] }
+  /** Card layout only: starts a new card within the section. The one-page view ignores it. */
+  | { type: 'cardBreak' }
 
 export interface Section {
   id: string
@@ -52,4 +54,7 @@ export interface Week {
   }
   sections: Section[]
   questions: Question[]
+  /** 'cards': the module opens as a Duolingo-style card lesson (content cards, then each section's
+   *  questions); `?view=page` still shows the one-page layout. Omitted: one scrolling page. */
+  layout?: 'cards'
 }

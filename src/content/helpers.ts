@@ -42,6 +42,9 @@ export const formula = (eq: string, note: Localized): Block => ({ type: 'formula
 
 export const exercise = (questionId: string): Block => ({ type: 'exercise', questionId })
 
+/** Starts a new card in modules with `layout: 'cards'`. */
+export const cardBreak: Block = { type: 'cardBreak' }
+
 /** A section; `label` is the small kicker ("Part 1"), `nav` the sidebar text. */
 export const section = (s: {
   id: string
