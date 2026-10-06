@@ -1,10 +1,13 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-// GitHub Pages serves this repo at https://ramialkhateeb.github.io/Job-interview/, so assets
-// need that subpath prefix in production builds. Local dev stays at '/'.
+// GitHub Pages serves a project site at https://<user>.github.io/<repo>/, so production builds need that
+// subpath. The repo name comes from Actions' GITHUB_REPOSITORY ("owner/repo"), so a rename can't break
+// the deploy again; 'Courses' is the fallback for local `GITHUB_PAGES=true` builds. Local dev stays at '/'.
 // https://vite.dev/config/
+const repo = process.env.GITHUB_REPOSITORY?.split('/')[1] ?? 'Courses'
+
 export default defineConfig({
-  base: process.env.GITHUB_PAGES === 'true' ? '/Job-interview/' : '/',
+  base: process.env.GITHUB_PAGES === 'true' ? `/${repo}/` : '/',
   plugins: [react()],
 })

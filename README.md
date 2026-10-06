@@ -1,8 +1,8 @@
-# Interview Prep
+# Courses
 
-Free, guest-friendly study app for tech job interviews — English and Arabic, light and dark mode, quizzes and code samples in Python / C# / JavaScript. No account needed; progress is saved in your browser.
+Free, guest-friendly course app for careers and business — English and Arabic, light and dark mode, quizzes, lesson mode with XP and streaks. No account needed; progress is saved in your browser.
 
-**Live site:** https://ramialkhateeb.github.io/Job-interview/
+**Live site:** https://ramialkhateeb.github.io/Courses/
 
 ## Courses
 
@@ -15,7 +15,17 @@ Free, guest-friendly study app for tech job interviews — English and Arabic, l
 | Data structures & algorithms patterns | ✅ |
 | Behavioral (STAR), offers & negotiation, SQL, JavaScript, system design, mock-interview checklist | soon |
 
-More courses can be added later (see below).
+**Business & finance**
+
+| Course | Written modules | Coming soon |
+| --- | --- | --- |
+| Investing Fundamentals | How investing works · Asset classes · Diversification, costs & behaviour | Valuation basics, retirement accounts, building a plan |
+| Personal Finance | Budgeting & emergency fund | Debt, credit, insurance, saving for big goals |
+| Accounting Essentials | The three financial statements | Bookkeeping, ratios, cash-flow management |
+| Entrepreneurship | Validating a business idea | Business models, pricing, unit economics, funding, legal basics |
+| Marketing Fundamentals | Customers, positioning & the funnel | Branding, digital channels, content & SEO, sales |
+
+Investing and personal-finance content is educational only, not financial advice; each of those course pages says so.
 
 ## Development
 
@@ -37,7 +47,7 @@ npm run build    # type-check + production build
 
 Pushing to `master` runs `.github/workflows/deploy.yml` (lint → test → build → publish). One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Pull requests run `.github/workflows/ci.yml`.
 
-The build uses base path `/Job-interview/` (`GITHUB_PAGES=true`) and copies `index.html` to `404.html` so deep links to a module work on Pages.
+The build uses base path `/<repo-name>/` (currently `/Courses/`, taken from `GITHUB_REPOSITORY` when `GITHUB_PAGES=true`) and copies `index.html` to `404.html` so deep links to a module work on Pages.
 
 ## Repository layout
 

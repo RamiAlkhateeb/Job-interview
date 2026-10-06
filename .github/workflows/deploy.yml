@@ -37,7 +37,7 @@ jobs:
         run: npm run build
 
       # SPA fallback: GitHub Pages has no server-side rewrites, so a direct
-      # load of e.g. /Job-interview/course/tech-interview/dsa 404s. Serving
+      # load of e.g. /Courses/course/tech-interview/dsa 404s. Serving
       # index.html as the 404 page lets the client-side router take over.
       - name: Add SPA 404 fallback
         run: cp dist/index.html dist/404.html

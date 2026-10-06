@@ -38,7 +38,7 @@ export const router = createBrowserRouter(
       ],
     },
   ],
-  // Matches vite.config.ts's `base`: '/' in dev, '/Job-interview/' when built for GitHub Pages.
+  // Matches vite.config.ts's `base`: '/' in dev, '/<repo>/' when built for GitHub Pages.
   { basename: import.meta.env.BASE_URL },
 )
 

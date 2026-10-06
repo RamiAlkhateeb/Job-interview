@@ -25,6 +25,11 @@ export function CoursePage() {
         <h1>{t(course.title)}</h1>
         <p>{t(course.description)}</p>
       </header>
+      {course.notice && (
+        <p className={styles.notice} role="note">
+          {t(course.notice)}
+        </p>
+      )}
       {course.groups.map((group) => (
         <section key={t(group.label)} className={styles.group}>
           <div className={styles.groupLabel}>{t(group.label)}</div>

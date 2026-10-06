@@ -5,9 +5,10 @@ import { initReactI18next } from 'react-i18next'
 const resources = {
   en: {
     translation: {
-      appName: 'Interview Prep',
-      appTagline: 'Tech job interview courses',
-      homeIntro: 'Free study material for tech job interviews. No account needed — pick a course and start reading. Your progress is saved in this browser.',
+      appName: 'Courses',
+      appTagline: 'Free courses for careers and business',
+      homeIntro: 'Free courses for your career and business: interview prep, investing, personal finance and more. No account needed — pick a course and start reading. Your progress is saved in this browser.',
+      category: { careers: 'Careers', business: 'Business & finance' },
       openCourse: 'Open course',
       courseContents: 'Course contents',
       backToCourse: 'Back to course',
@@ -51,9 +52,10 @@ const resources = {
   },
   ar: {
     translation: {
-      appName: 'التحضير للمقابلات',
-      appTagline: 'دورات المقابلات الوظيفية التقنية',
-      homeIntro: 'مواد دراسية مجانية للمقابلات الوظيفية التقنية. لا حاجة لحساب — اختر دورة وابدأ القراءة. يُحفظ تقدمك في هذا المتصفح.',
+      appName: 'الدورات',
+      appTagline: 'دورات مجانية للمسار المهني والأعمال',
+      homeIntro: 'دورات مجانية لمسارك المهني وأعمالك: التحضير للمقابلات والاستثمار والتمويل الشخصي وغيرها. لا حاجة لحساب — اختر دورة وابدأ القراءة. يُحفظ تقدمك في هذا المتصفح.',
+      category: { careers: 'المسار المهني', business: 'الأعمال والمال' },
       openCourse: 'افتح الدورة',
       courseContents: 'محتوى الدورة',
       backToCourse: 'العودة إلى الدورة',

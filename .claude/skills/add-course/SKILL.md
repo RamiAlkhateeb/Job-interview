@@ -1,12 +1,12 @@
 ---
 name: add-course
-description: Add a whole new course (e.g. "Cloud interview prep") alongside tech-interview. Use when the user wants a second course.
+description: Add a whole new course (e.g. "Project management") alongside the existing ones. Use when the user wants another course.
 ---
 
 # Add a course
 
-1. Create `src/content/courses/<course-id>/index.ts` exporting a `Course` (see `tech-interview/index.ts`): `id`, localized `title`/`description`, nav `groups`, and `loaders`.
-2. Create `helpers.ts` only if you need your own `COURSE_ID`-bound helpers; otherwise import from `tech-interview/helpers` after moving the generic ones (`heading`, `html`, `mcq`, `cover`) to `src/content/helpers.ts`.
-3. List the course in `src/content/courses.ts` (`courses` array). The home page, `/course/<id>` page, sidebar, contents panel and prev/next all derive from it — no router changes needed.
-4. Pick a distinct question-ID prefix per module and keep it globally unique (a test enforces this).
-5. Add modules with the `add-module` skill. Run `npm test`.
+1. Create `src/content/courses/<course-id>/index.ts` exporting a `Course` (see `investing/index.ts`): `id`, `category` (`careers` or `business`; add a new category in `CourseCategory`, `HomePage`'s `CATEGORIES` and the `category.*` i18n keys if neither fits), localized `title`/`description`, optional `notice` (shown on the course page — required wording for finance topics: educational only, not financial advice), nav `groups`, and `loaders`.
+2. Build content with the shared helpers in `src/content/helpers.ts` (`L`, `section`, `mcq`, …).
+3. List the course in `src/content/courses.ts` (`courses` array). The home page, `/course/<id>` page, lesson mode, sidebar, contents panel and prev/next all derive from it — no router changes needed.
+4. Pick a distinct letters-only question-ID prefix per module, unique app-wide (a test enforces this).
+5. Add modules with the `add-module` skill. Run `npm test`, `npm run lint`, `npm run build`.
