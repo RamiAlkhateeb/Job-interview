@@ -7,6 +7,7 @@ import { useLocalized } from '../../content/useLocalized'
 import { useWeek } from '../../content/useWeek'
 import { currentStreak, lessonXp, localDay, pickLessonQuestions } from '../progress/store'
 import { useProgress } from '../progress/useProgress'
+import { optionOrder } from '../quiz/optionOrder'
 import styles from './LessonPage.module.css'
 
 /** Questions per lesson (fewer if the module has fewer). */
@@ -63,6 +64,8 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
   const [done, setDone] = useState(false)
 
   const question = questions[index]
+  // Display position → index into question.options (see optionOrder).
+  const order = optionOrder(question.id, question.options.length)
   const isCorrect = checked && selected === question?.answer
   const isLast = index === questions.length - 1
 
@@ -97,7 +100,7 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
         return
       }
       const n = Number(e.key)
-      if (!checked && n >= 1 && n <= question.options.length) setSelected(n - 1)
+      if (!checked && n >= 1 && n <= order.length) setSelected(order[n - 1])
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -134,7 +137,7 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
       <h1 className={styles.prompt}>{t(question.prompt)}</h1>
 
       <div className={styles.options} role="radiogroup">
-        {question.options.map((option, i) => {
+        {order.map((i, position) => {
           const state = !checked
             ? selected === i
               ? styles.selected
@@ -154,8 +157,8 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
               disabled={checked}
               onClick={() => setSelected(i)}
             >
-              <span className={styles.key}>{i + 1}</span>
-              <span>{t(option)}</span>
+              <span className={styles.key}>{position + 1}</span>
+              <span>{t(question.options[i])}</span>
             </button>
           )
         })}

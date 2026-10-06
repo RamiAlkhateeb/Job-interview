@@ -1,5 +1,10 @@
 import type { Localized, Week } from './types'
 import { techInterview } from './courses/tech-interview'
+import { investing } from './courses/investing'
+import { personalFinance } from './courses/personal-finance'
+import { accounting } from './courses/accounting'
+import { entrepreneurship } from './courses/entrepreneurship'
+import { marketing } from './courses/marketing'
 
 export interface NavItem {
   id: string
@@ -11,10 +16,15 @@ export interface NavGroup {
   items: NavItem[]
 }
 
+export type CourseCategory = 'careers' | 'business'
+
 export interface Course {
   id: string
+  category: CourseCategory
   title: Localized
   description: Localized
+  /** Shown above the module list, e.g. "educational only, not financial advice". */
+  notice?: Localized
   groups: NavGroup[]
   /** One dynamic import per module so each lands in its own chunk. A nav item without a loader
    *  shows a "soon" badge automatically. */
@@ -22,7 +32,7 @@ export interface Course {
 }
 
 // Add a course: create src/content/courses/<id>/index.ts exporting a `Course`, then list it here.
-export const courses: Course[] = [techInterview]
+export const courses: Course[] = [techInterview, investing, personalFinance, accounting, entrepreneurship, marketing]
 
 export const getCourse = (id: string | undefined) => courses.find((c) => c.id === id)
 

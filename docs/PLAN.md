@@ -8,8 +8,12 @@
 - GitHub Actions: CI (PRs/branches) and Pages deploy from `master`; Dependabot; PR template.
 - Duolingo-style **Lesson mode** (`/course/:courseId/:moduleId/lesson`): 8 questions one at a time, instant feedback, score screen; XP (10 per correct, +20 perfect), daily streak (local midnight), Leitner boxes that make lessons favour unseen/missed questions. Streak + XP shown in the top bar.
 
-## Next: finish the first course
-Write the "Soon" modules: Behavioral (STAR), Offers & negotiation, SQL (from `solutions/sql/`), JavaScript (from `solutions/javascript/`), System design, Mock-interview checklist. Use the `add-module` skill.
+- Business courses (category "Business & finance" on the home page): **Investing Fundamentals** (3 modules), **Personal Finance**, **Accounting Essentials**, **Entrepreneurship**, **Marketing Fundamentals** (1 module each), with "Soon" placeholders for the rest. Shared content helpers in `src/content/helpers.ts`; per-question shuffled option order.
+
+## Next: finish the courses
+Write the "Soon" modules. Tech interview: Behavioral (STAR), Offers & negotiation, SQL (from `solutions/sql/`), JavaScript (from `solutions/javascript/`), System design, Mock-interview checklist. Business: investing (valuation, retirement accounts, investment plan), personal finance (debt, credit, insurance, goals), accounting (bookkeeping, ratios, cash management), entrepreneurship (business model, pricing, unit economics, funding, legal), marketing (branding, digital, content & SEO, sales). Use the `add-module` skill.
+
+More course ideas: Project management, Negotiation, Business analytics (port from `../BA2`), Leadership & management, E-commerce.
 
 ## Improvement ideas (not built yet)
 Learning experience

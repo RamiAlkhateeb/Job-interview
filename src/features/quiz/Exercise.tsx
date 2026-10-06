@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocalized } from '../../content/useLocalized'
 import { useProgress } from '../progress/useProgress'
+import { optionOrder } from './optionOrder'
 import { useQuestion } from './weekQuestions'
 import styles from '../../components/content/content.module.css'
 
@@ -38,7 +39,7 @@ export function Exercise({ questionId }: { questionId: string }) {
       </div>
       <p className={styles.exerciseQ}>{t(question.prompt)}</p>
       <div className={styles.exerciseOptions}>
-        {question.options.map((option, i) => (
+        {optionOrder(question.id, question.options.length).map((i) => (
           <label key={i}>
             <input
               type="radio"
@@ -47,7 +48,7 @@ export function Exercise({ questionId }: { questionId: string }) {
               disabled={submitted}
               onChange={() => setSelected(i)}
             />
-            {t(option)}
+            {t(question.options[i])}
           </label>
         ))}
       </div>

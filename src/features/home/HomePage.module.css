@@ -34,7 +34,7 @@
 .card:hover {
   border-color: var(--teal);
 }
-.card h2 {
+.card h3 {
   margin: 0 0 6px 0;
   font-size: 1.15rem;
 }
@@ -47,4 +47,15 @@
   color: var(--teal);
   font-weight: 700;
   font-size: 0.9rem;
+}
+.category {
+  margin-bottom: 32px;
+}
+.categoryLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 10px 4px;
 }

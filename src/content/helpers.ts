@@ -1,0 +1,74 @@
+// Small builders shared by every course's content files. They only shape data — no logic.
+import type { Block, Localized, Question, Section } from './types'
+
+/** Bilingual text: `L('Budget', 'الميزانية')`. */
+export const L = (en: string, ar: string): Localized => ({ en, ar })
+
+/** `<h2>` + standfirst markup for a section heading. */
+export const heading = (title: Localized, standfirst?: Localized): Localized => ({
+  en: `<h2>${title.en}</h2>${standfirst ? `<p class="standfirst">${standfirst.en}</p>` : ''}`,
+  ar: `<h2>${title.ar ?? title.en}</h2>${standfirst ? `<p class="standfirst">${standfirst.ar ?? standfirst.en}</p>` : ''}`,
+})
+
+export const cover = (kicker: Localized, title: Localized, time: Localized) => ({
+  kicker,
+  titleHtml: { en: `<h1>${title.en}</h1>`, ar: `<h1>${title.ar ?? title.en}</h1>` },
+  timeEstimate: time,
+})
+
+export const html = (value: Localized): Block => ({ type: 'html', html: value })
+
+export const box = (
+  variant: 'analogy' | 'mistake' | 'keypoint' | 'example',
+  label: Localized,
+  value: Localized,
+): Block => ({ type: 'box', variant, label, html: value })
+
+export const objectives = (items: Localized[], label = L('You will learn', 'ستتعلم')): Block => ({
+  type: 'objectives',
+  label,
+  items,
+})
+
+export const takeaways = (items: Localized[], label = L('Key takeaways', 'أهم النقاط')): Block => ({
+  type: 'takeaways',
+  label,
+  items,
+})
+
+export const table = (headers: Localized[], rows: Localized[][]): Block => ({ type: 'table', headers, rows })
+
+export const formula = (eq: string, note: Localized): Block => ({ type: 'formula', eq, note })
+
+export const exercise = (questionId: string): Block => ({ type: 'exercise', questionId })
+
+/** A section; `label` is the small kicker ("Part 1"), `nav` the sidebar text. */
+export const section = (s: {
+  id: string
+  label: Localized
+  nav: Localized
+  title: Localized
+  standfirst?: Localized
+  time?: Localized
+  blocks: Block[]
+}): Section => ({
+  id: s.id,
+  navLabel: s.nav,
+  sectionLabel: s.label,
+  timeEst: s.time,
+  headingHtml: heading(s.title, s.standfirst),
+  blocks: s.blocks,
+})
+
+/** Multiple-choice question with stable id `<prefix>-qNNN`; `answer` is the index into `options`. */
+export function mcq(
+  prefix: string,
+  weekId: string,
+  n: number,
+  topic: string,
+  prompt: Localized,
+  options: Localized[],
+  answer: number,
+): Question {
+  return { id: `${prefix}-q${String(n).padStart(3, '0')}`, weekId, topic, prompt, options, answer }
+}
