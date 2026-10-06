@@ -34,6 +34,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
   padding: 11px 12px;
   border-radius: 8px;
 }
@@ -77,6 +78,20 @@
   display: block;
   height: 100%;
   background: var(--teal);
+}
+.row a.lessonBtn {
+  background: var(--teal);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}
+.row a.lessonBtn:hover {
+  opacity: 0.88;
 }
 .reset {
   margin-top: 32px;

@@ -6,6 +6,7 @@
 - Local progress (sections read, quiz answers) in localStorage, shown on each course page, with reset.
 - Content validation tests (unique question IDs, answer ranges, every exercise resolves, Arabic present everywhere).
 - GitHub Actions: CI (PRs/branches) and Pages deploy from `master`; Dependabot; PR template.
+- Duolingo-style **Lesson mode** (`/course/:courseId/:moduleId/lesson`): 8 questions one at a time, instant feedback, score screen; XP (10 per correct, +20 perfect), daily streak (local midnight), Leitner boxes that make lessons favour unseen/missed questions. Streak + XP shown in the top bar.
 
 ## Next: finish the first course
 Write the "Soon" modules: Behavioral (STAR), Offers & negotiation, SQL (from `solutions/sql/`), JavaScript (from `solutions/javascript/`), System design, Mock-interview checklist. Use the `add-module` skill.
@@ -13,7 +14,8 @@ Write the "Soon" modules: Behavioral (STAR), Offers & negotiation, SQL (from `so
 ## Improvement ideas (not built yet)
 Learning experience
 - **Review-missed mode**: a page that replays only questions answered wrongly (data is already in `progress.answers`).
-- **Spaced repetition** for questions (Leitner boxes in the same localStorage store).
+- **Spaced repetition** across modules: boxes already exist (`progress.boxes`); add a "Practice" lesson that pulls due questions from every module.
+- **Duolingo next steps**: hearts, daily XP goal, skill-path course page (locked/unlocked nodes), badges, more question types (true/false, fill-in-the-blank, ordering).
 - **Timed mock quiz**: random N questions across modules with a score screen.
 - **Search** across modules (Pagefind or MiniSearch, built at deploy time).
 - **Per-question explanations** shown after answering; **bookmarks / notes** per section.
