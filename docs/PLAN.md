@@ -43,4 +43,4 @@ Platform
 - Contributions: issue templates for "wrong answer" and "suggest a question".
 
 ## Later: accounts (optional)
-Guest mode is a deliberate choice. If cross-device progress is wanted later: the BA2 repo (`../BA2`) has a working Supabase setup (auth provider, RLS migrations, `question_attempts` / `week_progress`). To re-add it, implement the same API as `src/features/progress/store.ts` on top of Supabase, keep guest mode as the fallback, and add `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` as repository secrets for the Pages build. Frontend uses the anon key only; every table needs RLS.
+Guest mode is a deliberate choice. Optional accounts (cross-device sync) reusing the BA2 Supabase archive are planned in detail in [`docs/SUPABASE-INTEGRATION.md`](SUPABASE-INTEGRATION.md): which archived migrations and components to reuse, a new `0006` migration for lessons/XP/review boxes, the sync and merge design behind `src/features/progress/store.ts`, deploy secrets, security checklist, phases and tests.

@@ -25,7 +25,7 @@ Vite + React + TypeScript study app (brand "Masar · مسار", repo `Courses`) 
 - Progress goes only through `src/features/progress/store.ts` (so a backend can replace it later).
 - Roadmap lessons come from `lessonsFor(week)` (`src/features/lesson/lessons.ts`); finished ones are saved as `course/module/lessonId` in `lessonsDone` (plus `lastLesson` for Home's Continue and per-day XP in `activity`), so changing how a section splits into parts can reset its ✓.
 - Deploy base path is `/<repo>/` (from `GITHUB_REPOSITORY`, fallback `/Courses/`) when `GITHUB_PAGES=true` (see `vite.config.ts`); use `import.meta.env.BASE_URL` / `resolveAssetPath`, never hard-code it.
-- No secrets are needed. If a backend is ever added, see `docs/PLAN.md` ("Later: accounts").
+- No secrets are needed. If a backend is ever added, follow `docs/SUPABASE-INTEGRATION.md` (optional accounts on the BA2 Supabase archive; guest mode stays the default).
 
 ## Skills
 `add-module`, `add-course` in `.claude/skills/`.
