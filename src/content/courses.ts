@@ -5,6 +5,15 @@ import { personalFinance } from './courses/personal-finance'
 import { accounting } from './courses/accounting'
 import { entrepreneurship } from './courses/entrepreneurship'
 import { marketing } from './courses/marketing'
+import { gameTheory } from './courses/game-theory'
+import { dataAnalysis } from './courses/data-analysis'
+import { management } from './courses/management'
+import { operations } from './courses/operations'
+import { costAccounting } from './courses/cost-accounting'
+import { decisionTheory } from './courses/decision-theory'
+import { financialManagement } from './courses/financial-management'
+import { economics } from './courses/economics'
+import { dss } from './courses/dss'
 
 export interface NavItem {
   id: string
@@ -16,11 +25,17 @@ export interface NavGroup {
   items: NavItem[]
 }
 
-export type CourseCategory = 'careers' | 'business'
+export type CourseCategory = 'careers' | 'business' | 'management'
+
+/** Who a course is for; a course can serve several. Shown as badges and used by Home's filter. */
+export type AudienceId = 'job-seekers' | 'professionals' | 'entrepreneurs'
+export const AUDIENCES: AudienceId[] = ['job-seekers', 'professionals', 'entrepreneurs']
 
 export interface Course {
   id: string
   category: CourseCategory
+  /** At least one; see AUDIENCES. */
+  audiences: AudienceId[]
   title: Localized
   description: Localized
   /** Shown above the module list, e.g. "educational only, not financial advice". */
@@ -34,7 +49,23 @@ export interface Course {
 }
 
 // Add a course: create src/content/courses/<id>/index.ts exporting a `Course`, then list it here.
-export const courses: Course[] = [techInterview, investing, personalFinance, accounting, entrepreneurship, marketing]
+export const courses: Course[] = [
+  techInterview,
+  dataAnalysis,
+  investing,
+  personalFinance,
+  accounting,
+  costAccounting,
+  financialManagement,
+  economics,
+  entrepreneurship,
+  marketing,
+  management,
+  operations,
+  decisionTheory,
+  gameTheory,
+  dss,
+]
 
 export const getCourse = (id: string | undefined) => courses.find((c) => c.id === id)
 

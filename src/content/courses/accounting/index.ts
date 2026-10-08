@@ -4,6 +4,7 @@ import { L } from '../../helpers'
 export const accounting: Course = {
   id: 'accounting',
   category: 'business',
+  audiences: ['entrepreneurs', 'professionals'],
   title: L('Accounting Essentials', 'أساسيات المحاسبة'),
   description: L(
     'Read the numbers behind any business: the three financial statements, bookkeeping, key ratios and cash-flow management.',

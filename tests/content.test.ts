@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { courses } from '../src/content/courses'
+import { AUDIENCES, courses } from '../src/content/courses'
 import type { Block, Localized, Week } from '../src/content/types'
 
 /** Every module of every course, loaded the same way the app loads them. */
@@ -99,6 +99,28 @@ describe('course content', () => {
     for (const course of courses) {
       expect(course.audience?.en, course.id).toBeTruthy()
       expect(course.audience?.ar, course.id).toBeTruthy()
+    }
+  })
+
+  it('every course has a unique id, a known category and at least one audience', () => {
+    const ids = courses.map((c) => c.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    for (const course of courses) {
+      expect(['careers', 'business', 'management'], course.id).toContain(course.category)
+      expect(course.audiences.length, `${course.id}: no audience`).toBeGreaterThan(0)
+      expect(new Set(course.audiences).size, `${course.id}: duplicate audience`).toBe(course.audiences.length)
+      for (const a of course.audiences) expect(AUDIENCES, course.id).toContain(a)
+    }
+  })
+
+  it('every course and chapter title has both languages, including planned (unwritten) chapters', () => {
+    for (const course of courses) {
+      expect(course.title.ar, course.id).toBeTruthy()
+      expect(course.description.ar, course.id).toBeTruthy()
+      for (const group of course.groups) {
+        expect(group.label.ar, `${course.id}: group`).toBeTruthy()
+        for (const item of group.items) expect(item.title.ar, `${course.id}/${item.id}`).toBeTruthy()
+      }
     }
   })
 })

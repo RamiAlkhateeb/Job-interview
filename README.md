@@ -27,6 +27,22 @@
 
 Investing and personal-finance content is educational only, not financial advice; each of those course pages says so.
 
+**Outlined — planned chapters, lessons to be written**
+
+| Course | Category | For |
+| --- | --- | --- |
+| Data Analysis | Careers | Job seekers, professionals |
+| Accounting and Cost Analysis | Business & finance | Professionals, entrepreneurs |
+| Financial Management & Feasibility Study | Business & finance | Entrepreneurs, professionals |
+| Introduction to Economics | Business & finance | Job seekers, professionals |
+| Fundamentals of Management and Theories of Organizations | Management & decision science | Professionals, entrepreneurs |
+| Operations and Supply Chain Management | Management & decision science | Professionals, job seekers |
+| Decision Theory | Management & decision science | Professionals |
+| Game Theory | Management & decision science | Professionals, entrepreneurs |
+| Modeling Procedures in Decision Support Systems | Management & decision science | Professionals |
+
+Every course is tagged for one or more audiences — **Job seekers**, **Managers & professionals**, **Entrepreneurs** — and the home page can filter by them.
+
 ## Development
 
 ```bash

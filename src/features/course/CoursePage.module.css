@@ -381,3 +381,21 @@ a.row:hover {
     padding: 14px 14px;
   }
 }
+
+.audiences {
+  margin-bottom: 12px;
+}
+/* Outline-only course: chapters are planned, no lessons yet. */
+.comingNote {
+  margin: 20px 0 0 0;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.comingNote strong {
+  color: var(--ink);
+  margin-inline-end: 4px;
+}

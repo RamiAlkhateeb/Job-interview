@@ -9,7 +9,7 @@ Vite + React + TypeScript study app (brand "Masar · مسار", repo `Courses`) 
 - `npm test`: vitest — validates all course content + progress helpers
 
 ## Layout
-- `src/content/courses.ts`: course registry. Each course is `src/content/courses/<id>/index.ts` + one file per module; `category` (`careers` / `business`) groups it on the home page.
+- `src/content/courses.ts`: course registry. Each course is `src/content/courses/<id>/index.ts` + one file per module; `category` (`careers` / `business` / `management`) groups it on the home page and `audiences` (`job-seekers` / `professionals` / `entrepreneurs`, at least one) drives the Home filter and badges. A course with no `loaders` is an outline: its chapters show as "Coming soon".
 - `src/content/helpers.ts`: shared content builders (`L`, `section`, `mcq`, `box`, `table`, …).
 - `src/features/<name>/`: feature code (`course`, `weeks`, `quiz`, `lesson`, `progress`, `home`, `settings`); shared UI in `src/components/`.
 - `solutions/`: the author's practice solutions (C#/Python/JS/SQL/Java). Not part of the app build.
