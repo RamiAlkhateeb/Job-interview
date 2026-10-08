@@ -28,6 +28,9 @@ export type Block =
   | { type: 'formula'; eq: string; note: Localized }
   | { type: 'table'; headers: Localized[]; rows: Localized[][] }
   | { type: 'tabs'; tabs: { label: Localized; blocks: Block[] }[] }
+  /** Lessons only: forces a new card here (cards are otherwise cut automatically, see
+   *  src/features/lesson/chunks.ts). The one-page view ignores it. */
+  | { type: 'cardBreak' }
 
 export interface Section {
   id: string

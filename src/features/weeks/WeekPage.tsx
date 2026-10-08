@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { practiceHref } from '../../content/courses'
 import { useWeek } from '../../content/useWeek'
 import { Cover } from '../../components/content/Cover'
 import { SectionView } from '../../components/content/SectionView'
@@ -42,6 +43,11 @@ export function WeekPage() {
         {week.sections.map((section) => (
           <SectionView key={section.id} section={section} />
         ))}
+        {week.questions.length > 0 && (
+          <p className={contentStyles.quizCta}>
+            <Link to={practiceHref(week.courseId, week.id)}>{t('takeQuiz')} →</Link>
+          </p>
+        )}
         <WeekNav courseId={week.courseId} weekId={week.id} />
       </div>
     </WeekQuestionsContext.Provider>

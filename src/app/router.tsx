@@ -27,6 +27,21 @@ export const router = createBrowserRouter(
           },
         },
         {
+          // A roadmap lesson: small cards from one section, then its questions.
+          path: 'course/:courseId/:moduleId/learn/:lessonId',
+          lazy: async () => {
+            const { LessonRoute } = await import('../features/lesson/CardLesson')
+            return { element: <LessonRoute /> }
+          },
+        },
+        {
+          path: 'settings',
+          lazy: async () => {
+            const { SettingsPage } = await import('../features/settings/SettingsPage')
+            return { element: <SettingsPage /> }
+          },
+        },
+        {
           // `moduleId`, not `id`: AppShell keys the sidebar's section list off `id`, and a lesson has no sections.
           path: 'course/:courseId/:moduleId/lesson',
           lazy: async () => {

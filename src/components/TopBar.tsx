@@ -1,17 +1,12 @@
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { currentStreak, localDay } from '../features/progress/store'
 import { useProgress } from '../features/progress/useProgress'
-import { useTheme } from '../features/theme/useTheme'
 import styles from './TopBar.module.css'
 
-const LANGS = [
-  { code: 'en', label: 'EN' },
-  { code: 'ar', label: 'AR' },
-] as const
-
+/** Streak, XP and a link to Settings (language, theme and sound live there). */
 export function TopBar() {
-  const { t, i18n } = useTranslation()
-  const { theme, toggle } = useTheme()
+  const { t } = useTranslation()
   const { progress } = useProgress()
   const streak = currentStreak(progress.streak, localDay())
 
@@ -23,24 +18,9 @@ export function TopBar() {
         </span>
         <span title={t('totalXp', { xp: progress.xp })}>⚡ {progress.xp}</span>
       </span>
-      {LANGS.map((l) => (
-        <button
-          key={l.code}
-          type="button"
-          className={i18n.language === l.code ? styles.active : undefined}
-          onClick={() => i18n.changeLanguage(l.code)}
-        >
-          {l.label}
-        </button>
-      ))}
-      <button
-        type="button"
-        className={styles.themeToggle}
-        onClick={toggle}
-        aria-label={theme === 'dark' ? t('lightMode') : t('darkMode')}
-      >
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
+      <Link to="/settings" className={styles.settingsLink} aria-label={t('settings')} title={t('settings')}>
+        ⚙️
+      </Link>
     </div>
   )
 }
