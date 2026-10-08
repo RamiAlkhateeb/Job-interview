@@ -3,14 +3,14 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Blocks } from '../../components/content/Blocks'
 import contentStyles from '../../components/content/content.module.css'
-import { getCourse, moduleHref } from '../../content/courses'
+import { flatNav, getCourse, moduleHref } from '../../content/courses'
 import { resolveHtmlAssetPaths } from '../../content/resolveAssetPath'
 import type { Week } from '../../content/types'
 import { useLocalized } from '../../content/useLocalized'
 import { useWeek } from '../../content/useWeek'
 import { useProgress } from '../progress/useProgress'
 import { WeekQuestionsContext } from '../quiz/weekQuestions'
-import { learnHref, lessonKey, lessonsFor, type Lesson } from './lessons'
+import { learnHref, lessonKey, lessonMinutes, lessonRecap, lessonsFor, type Lesson } from './lessons'
 import {
   AnswerFeedback,
   LessonFooter,
@@ -98,6 +98,7 @@ function CardRun({ week, lesson, next, onRestart }: { week: Week; lesson: Lesson
     return (
       <LessonSummary
         courseId={week.courseId}
+        recap={lessonRecap(lesson)}
         correct={correctCount}
         total={total}
         action={tUi('lessonContinue')}
@@ -109,11 +110,22 @@ function CardRun({ week, lesson, next, onRestart }: { week: Week; lesson: Lesson
   }
 
   const continueLabel = isLast ? tUi('lessonFinish') : tUi('lessonContinue')
+  const chapter = flatNav(getCourse(week.courseId)!).find((i) => i.id === week.id)
+  const lessonTitle =
+    lesson.parts > 1 ? tUi('lessonOfParts', { title: t(lesson.title), n: lesson.part, of: lesson.parts }) : t(lesson.title)
+  const topTitle = chapter ? `${t(chapter.title)} · ${lessonTitle}` : lessonTitle
 
   return (
     <WeekQuestionsContext.Provider value={week.questions}>
       <div className={styles.lesson}>
-        <LessonTopBar quitTo={coursePath} done={index + (checked ? 1 : 0)} total={steps.length} />
+        <LessonTopBar
+          quitTo={coursePath}
+          done={index + (checked ? 1 : 0)}
+          total={steps.length}
+          kinds={steps.map((s) => s.kind)}
+          title={topTitle}
+          minutesLeft={lessonMinutes({ ...lesson, steps: steps.slice(index) })}
+        />
 
         {step.kind === 'content' ? (
           // key: a new card replays the entrance animation.

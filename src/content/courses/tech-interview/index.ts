@@ -8,6 +8,10 @@ export const techInterview: Course = {
     en: 'Everything for a software-engineering job search: ATS-friendly resume, .NET interview questions with analogies, and the data-structure patterns behind coding rounds.',
     ar: 'كل ما تحتاجه للبحث عن وظيفة في هندسة البرمجيات: سيرة ذاتية متوافقة مع ATS، وأسئلة مقابلات .NET مع التشبيهات، وأنماط هياكل البيانات خلف جولات البرمجة.',
   },
+  audience: {
+    en: 'Software engineers preparing for job applications and interviews, from the resume to the technical rounds.',
+    ar: 'لمهندسي البرمجيات الذين يستعدون للتقديم على الوظائف والمقابلات، من السيرة الذاتية إلى الجولات التقنية.',
+  },
   groups: [
     {
       label: { en: 'Getting hired', ar: 'الحصول على الوظيفة' },

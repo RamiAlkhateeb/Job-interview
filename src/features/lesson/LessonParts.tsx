@@ -8,24 +8,58 @@ import { currentStreak, lessonXp, localDay } from '../progress/store'
 import { useProgress } from '../progress/useProgress'
 import { optionOrder } from '../quiz/optionOrder'
 import { playSound } from '../settings/sound'
+import type { Recap } from './lessons'
 import styles from './LessonPage.module.css'
 
-/** ✕ (quit), progress bar and an "n/total" counter. */
-export function LessonTopBar({ quitTo, done, total }: { quitTo: string; done: number; total: number }) {
+/** ✕ (quit), a segmented progress bar (one segment per step; question steps drawn thicker), an "n/total"
+ *  counter, and optionally the lesson's title and time left underneath. */
+export function LessonTopBar({
+  quitTo,
+  done,
+  total,
+  kinds,
+  title,
+  minutesLeft,
+}: {
+  quitTo: string
+  done: number
+  total: number
+  kinds?: ('content' | 'question')[]
+  title?: string
+  minutesLeft?: number
+}) {
   const { t } = useTranslation()
-  const percent = Math.round((done / total) * 100)
   return (
-    <div className={styles.top}>
-      <Link to={quitTo} className={styles.quit} aria-label={t('lessonQuit')}>
-        ✕
-      </Link>
-      <div className={styles.progress} role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done}>
-        <span style={{ width: `${percent}%` }} />
+    <>
+      <div className={styles.top}>
+        <Link to={quitTo} className={styles.quit} aria-label={t('lessonQuit')}>
+          ✕
+        </Link>
+        <div className={styles.progress} role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={done}>
+          {Array.from({ length: total }, (_, i) => (
+            <span
+              key={i}
+              className={[
+                styles.seg,
+                kinds?.[i] === 'question' ? styles.segQ : '',
+                i < done ? styles.segDone : i === done ? styles.segNow : '',
+              ].join(' ')}
+            />
+          ))}
+        </div>
+        <span className={styles.counter}>
+          {Math.min(done + 1, total)}/{total}
+        </span>
       </div>
-      <span className={styles.counter}>
-        {Math.min(done + 1, total)}/{total}
-      </span>
-    </div>
+      {title ? (
+        <p className={styles.lessonTitle}>
+          <span>{title}</span>
+          {minutesLeft !== undefined && <span>{t('minutesLeft', { n: minutesLeft })}</span>}
+        </p>
+      ) : (
+        <div style={{ height: 24 }} />
+      )}
+    </>
   )
 }
 
@@ -113,11 +147,21 @@ export function LessonFooter({
 export function AnswerFeedback({ question, correct }: { question: Question; correct: boolean }) {
   const t = useLocalized()
   const { t: tUi } = useTranslation()
-  if (correct) return <strong>{tUi('lessonCorrect')}</strong>
   return (
     <>
-      <strong>{tUi('lessonWrong')}</strong>
-      <span>{t(question.options[question.answer])}</span>
+      <span className={styles.feedbackIcon} aria-hidden>
+        <span>{correct ? '✓' : '✕'}</span>
+      </span>
+      <span className={styles.feedbackText}>
+        {correct ? (
+          <strong>{tUi('lessonCorrect')}</strong>
+        ) : (
+          <>
+            <strong>{tUi('lessonWrong')}</strong>
+            <span>{t(question.options[question.answer])}</span>
+          </>
+        )}
+      </span>
     </>
   )
 }
@@ -169,6 +213,7 @@ export function LessonSummary({
   onAction,
   secondary,
   onSecondary,
+  recap,
 }: {
   courseId: string
   correct: number
@@ -177,7 +222,10 @@ export function LessonSummary({
   onAction: () => void
   secondary?: string
   onSecondary?: () => void
+  /** "What you learned" (card lessons only) */
+  recap?: Recap | null
 }) {
+  const t = useLocalized()
   const { t: tUi } = useTranslation()
   const { progress } = useProgress()
   const streak = currentStreak(progress.streak, localDay())
@@ -188,7 +236,7 @@ export function LessonSummary({
   return (
     <div className={`${styles.lesson} ${styles.summary}`}>
       <div className={styles.trophy} aria-hidden>
-        {perfect ? '🏆' : '🎉'}
+        {perfect ? '★' : '✓'}
       </div>
       <h1>{perfect ? tUi('lessonPerfect') : tUi('lessonComplete')}</h1>
       <div className={styles.stats}>
@@ -204,11 +252,31 @@ export function LessonSummary({
           <span className={styles.statLabel}>{tUi('lessonXpEarned')}</span>
           <span className={styles.statValue}>+{lessonXp(correct, total)}</span>
         </div>
-        <div className={`${styles.stat} ${styles.statStreak}`}>
+        <div className={styles.stat}>
           <span className={styles.statLabel}>{tUi('streak')}</span>
           <span className={styles.statValue}>🔥 {streak}</span>
         </div>
       </div>
+      {recap && (
+        <section className={styles.recap}>
+          <h2>{tUi('whatYouLearned')}</h2>
+          {recap.kind === 'takeaways' ? (
+            <ul>
+              {recap.items.map((item, k) => (
+                <li key={k}>{t(item)}</li>
+              ))}
+            </ul>
+          ) : (
+            <div className={styles.chips}>
+              {recap.items.map((item, k) => (
+                <span key={k} className={styles.chip}>
+                  {t(item)}
+                </span>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
       <div className={styles.actions}>
         <button type="button" className={styles.primary} onClick={onAction} autoFocus>
           {action}

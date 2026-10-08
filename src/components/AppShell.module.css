@@ -15,16 +15,13 @@
   padding: 64px 18px 28px 18px;
 }
 .brand {
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--teal);
-  margin-bottom: 4px;
+  display: inline-block;
+  text-decoration: none;
+  margin-bottom: 14px;
 }
 .brandSub {
-  font-size: 14.5px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--ink);
   margin-bottom: 22px;
   line-height: 1.35;
@@ -44,8 +41,8 @@
   color: var(--ink);
 }
 .sidebar nav a.current {
-  background: var(--teal-bg);
-  color: var(--teal);
+  background: var(--brand-bg);
+  color: var(--brand);
   font-weight: 700;
 }
 .sidebarHint {

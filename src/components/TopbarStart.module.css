@@ -24,8 +24,8 @@
   text-decoration: none;
 }
 .pillBtn:hover {
-  color: var(--teal);
-  border-color: var(--teal);
+  color: var(--brand);
+  border-color: var(--brand);
 }
 
 @media (max-width: 900px) {

@@ -67,3 +67,98 @@ export const lessonKey = (courseId: string, moduleId: string, lessonId: string) 
 /** URL of a roadmap lesson (the quiz-only practice run is `practiceHref` in src/content/courses.ts). */
 export const learnHref = (courseId: string, moduleId: string, lessonId: string) =>
   `/course/${courseId}/${moduleId}/learn/${lessonId}`
+
+const strip = (html: string) => html.replace(/<[^>]+>/g, ' ')
+const words = (text: string) => text.split(/\s+/).filter(Boolean).length
+
+/** Reading words in a block (English text; tabs count their first tab only — the others are alternatives). */
+function blockWords(block: Block): number {
+  switch (block.type) {
+    case 'html':
+    case 'box':
+      return words(strip(block.html.en))
+    case 'objectives':
+    case 'takeaways':
+      return block.items.reduce((n, item) => n + words(strip(item.en)), 0)
+    case 'table':
+      return [...block.headers, ...block.rows.flat()].reduce((n, cell) => n + words(strip(cell.en)), 0)
+    case 'formula':
+      return words(block.eq) + words(block.note.en)
+    case 'code':
+      return block.code.split('\n').length * 3
+    case 'tabs':
+      return (block.tabs[0]?.blocks ?? []).reduce((n, b) => n + blockWords(b), 0)
+    case 'diagram':
+      return words(strip(block.caption.en)) + 20
+    default:
+      return 0
+  }
+}
+
+/** Estimated minutes for a lesson: reading at ~200 words/min plus half a minute per question; at least 1. */
+export function lessonMinutes(lesson: Lesson): number {
+  let reading = 0
+  let questions = 0
+  for (const step of lesson.steps) {
+    if (step.kind === 'question') questions++
+    else reading += step.blocks.reduce((n, b) => n + blockWords(b), 0) + (step.heading?.html ? words(strip(step.heading.html.en)) : 0)
+  }
+  return Math.max(1, Math.ceil(reading / 200 + questions * 0.5))
+}
+
+export const moduleMinutes = (lessons: Lesson[]) => lessons.reduce((n, l) => n + lessonMinutes(l), 0)
+
+export type Recap = { kind: 'takeaways' | 'terms'; items: Localized[] }
+
+/** "What you learned" for a lesson's summary: its takeaways block if it has one, otherwise up to 6 key terms
+ *  (the bold phrases of its cards, English and Arabic matched in order, deduplicated). Null if neither. */
+export function lessonRecap(lesson: Lesson): Recap | null {
+  const terms: Localized[] = []
+  const seen = new Set<string>()
+  for (const step of lesson.steps) {
+    if (step.kind !== 'content') continue
+    for (const block of step.blocks) {
+      if (block.type === 'takeaways') return { kind: 'takeaways', items: block.items }
+      if (block.type !== 'html' && block.type !== 'box') continue
+      const en = boldTerms(block.html.en)
+      const ar = block.html.ar ? boldTerms(block.html.ar) : en
+      if (ar.length !== en.length) continue // can't pair them up safely
+      en.forEach((term, i) => {
+        const key = term.toLowerCase()
+        if (term.length > 40 || seen.has(key)) return
+        seen.add(key)
+        terms.push({ en: term, ar: ar[i] })
+      })
+    }
+  }
+  return terms.length ? { kind: 'terms', items: terms.slice(0, 6) } : null
+}
+
+const boldTerms = (html: string) =>
+  [...html.matchAll(/<strong>(.*?)<\/strong>/g)].map((m) => strip(m[1]).replace(/\s+/g, ' ').trim()).filter(Boolean)
+
+/** Where "Continue" goes in a course: the first unfinished lesson of the first chapter already started but not
+ *  finished, else of the first chapter not finished. `weeks` holds the loaded modules, in course order. */
+export function nextInCourse(
+  courseId: string,
+  weeks: Week[],
+  lessonsDone: string[],
+): { week: Week; lesson: Lesson } | null {
+  const chapters = weeks.map((week) => {
+    const lessons = lessonsFor(week)
+    const done = lessons.filter((l) => lessonsDone.includes(lessonKey(courseId, week.id, l.id)))
+    return { week, lessons, done: done.length }
+  })
+  const pick = chapters.find((c) => c.done > 0 && c.done < c.lessons.length) ?? chapters.find((c) => c.done < c.lessons.length)
+  if (!pick) return null
+  const lesson = pick.lessons.find((l) => !lessonsDone.includes(lessonKey(courseId, pick.week.id, l.id)))!
+  return { week: pick.week, lesson }
+}
+
+/** "≈ 25 min" or "≈ 1 h 40 min". */
+export function formatDuration(minutes: number, tUi: (key: string, opts?: Record<string, unknown>) => string) {
+  if (minutes < 60) return tUi('minutes', { n: minutes })
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return m ? tUi('hoursMinutes', { h, m }) : tUi('hours', { h })
+}

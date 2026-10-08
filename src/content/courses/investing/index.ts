@@ -9,6 +9,10 @@ export const investing: Course = {
     'How investing works: compounding, risk and return, the main asset classes, diversification, costs and the mistakes that hurt investors most.',
     'كيف يعمل الاستثمار: الفائدة المركبة، والمخاطرة والعائد، وفئات الأصول الرئيسية، والتنويع، والتكاليف، والأخطاء الأكثر ضررًا بالمستثمرين.',
   ),
+  audience: L(
+    'Beginners who want to understand how investing works before putting money in — no prior knowledge needed.',
+    'للمبتدئين الذين يريدون فهم كيف يعمل الاستثمار قبل وضع أموالهم — دون معرفة مسبقة.',
+  ),
   notice: L(
     'Educational content only — not financial advice. It does not consider your personal situation, and every investment can lose money. For decisions about your own money, talk to a licensed financial adviser.',
     'محتوى تعليمي فقط — وليس نصيحة مالية. لا يأخذ وضعك الشخصي في الاعتبار، وكل استثمار معرّض لخسارة المال. لقرارات تخص أموالك، استشر مستشارًا ماليًا مرخّصًا.',

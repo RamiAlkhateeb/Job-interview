@@ -21,7 +21,7 @@ import styles from './LessonPage.module.css'
 /** Questions per lesson (fewer if the module has fewer). */
 const LESSON_SIZE = 8
 
-/** Duolingo-style lesson: a short run of a module's questions, one at a time, then XP + streak. */
+/** Practice: a short run of a module's questions (least-known first), one at a time, then XP + streak. */
 export function LessonPage() {
   const { courseId, moduleId } = useParams<{ courseId: string; moduleId: string }>()
   const { t: tUi } = useTranslation()
@@ -34,15 +34,18 @@ export function LessonPage() {
 }
 
 function LessonRunner({ week }: { week: Week }) {
+  const t = useLocalized()
   const { progress } = useProgress()
   const [round, setRound] = useState(0)
   // Picked once per round: later box changes must not reshuffle the lesson mid-way.
   const [picks, setPicks] = useState(() => pick(week, progress.boxes))
   // Keyed by round so "Practice again" remounts a fresh lesson with a new pick of questions.
   return (
-    <Lesson
+    <QuizLesson
       key={round}
-      week={week}
+      courseId={week.courseId}
+      kicker={t(week.cover.kicker)}
+      quitTo={moduleHref(week.courseId, week.id)}
       questions={picks}
       onRestart={() => {
         setPicks(pick(week, progress.boxes))
@@ -61,8 +64,23 @@ function pick(week: Week, boxes: Record<string, number>): Question[] {
   return ids.map((id) => week.questions.find((q) => q.id === id)!)
 }
 
-function Lesson({ week, questions, onRestart }: { week: Week; questions: Question[]; onRestart: () => void }) {
-  const t = useLocalized()
+/** A run of questions, one at a time, then XP and the streak. Used by Practice and Review mistakes; it completes
+ *  no roadmap lesson. */
+export function QuizLesson({
+  courseId,
+  kicker,
+  quitTo,
+  questions,
+  onRestart,
+  againLabel,
+}: {
+  courseId: string
+  kicker: string
+  quitTo: string
+  questions: Question[]
+  onRestart: () => void
+  againLabel?: string
+}) {
   const { t: tUi } = useTranslation()
   const { recordLessonAnswer, completeLesson } = useProgress()
   const [index, setIndex] = useState(0)
@@ -86,7 +104,7 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
 
   function next() {
     if (isLast) {
-      completeLesson(correctCount, questions.length, `${week.courseId}/${week.id}`)
+      completeLesson(correctCount, questions.length)
       setDone(true)
       return
     }
@@ -100,10 +118,10 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
   if (done) {
     return (
       <LessonSummary
-        courseId={week.courseId}
+        courseId={courseId}
         correct={correctCount}
         total={questions.length}
-        action={tUi('lessonAgain')}
+        action={againLabel ?? tUi('lessonAgain')}
         onAction={onRestart}
       />
     )
@@ -112,13 +130,13 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
   return (
     <div className={styles.lesson}>
       <LessonTopBar
-        quitTo={moduleHref(week.courseId, week.id)}
+        quitTo={quitTo}
         done={index + (checked ? 1 : 0)}
         total={questions.length}
       />
       <QuestionCard
         question={question}
-        kicker={t(week.cover.kicker)}
+        kicker={kicker}
         selected={selected}
         checked={checked}
         onSelect={setSelected}

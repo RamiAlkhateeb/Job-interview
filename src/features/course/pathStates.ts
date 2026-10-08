@@ -15,6 +15,3 @@ export function unitStates(lessonIds: string[], lessonsDone: string[], keyPrefix
   })
 }
 
-/** Sideways offset (px) of the n-th node, so the path winds like Duolingo's. Logical: mirrors in RTL. */
-const WIND = [0, 44, 72, 44, 0, -44, -72, -44]
-export const nodeOffset = (n: number) => WIND[n % WIND.length]

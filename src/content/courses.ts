@@ -25,6 +25,8 @@ export interface Course {
   description: Localized
   /** Shown above the module list, e.g. "educational only, not financial advice". */
   notice?: Localized
+  /** "Who it's for", one sentence on the course page header. */
+  audience?: Localized
   groups: NavGroup[]
   /** One dynamic import per module so each lands in its own chunk. A nav item without a loader
    *  shows a "soon" badge automatically. */

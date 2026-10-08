@@ -66,3 +66,42 @@ describe('roadmap lessons (every module)', () => {
     }
   })
 })
+
+describe('lesson time, recap and next lesson', () => {
+  it('estimates at least a minute per lesson, more for longer ones', async () => {
+    const { lessonMinutes } = await import('../src/features/lesson/lessons')
+    for (const week of await allWeeks()) {
+      for (const lesson of lessonsFor(week)) expect(lessonMinutes(lesson), `${week.id}/${lesson.id}`).toBeGreaterThanOrEqual(1)
+    }
+    const short = { id: 'a', sectionId: 's', part: 1, parts: 1, title: { en: '' }, steps: [{ kind: 'content' as const, sectionId: 's', blocks: [{ type: 'html' as const, html: { en: 'word '.repeat(150) } }] }] }
+    const long = { ...short, steps: [{ ...short.steps[0], blocks: [{ type: 'html' as const, html: { en: 'word '.repeat(900) } }] }] }
+    expect(lessonMinutes(short)).toBe(1)
+    expect(lessonMinutes(long)).toBe(5)
+  })
+
+  it('recaps with the takeaways block if a lesson has one, else its bold terms (deduped, at most 6)', async () => {
+    const { lessonRecap } = await import('../src/features/lesson/lessons')
+    const lesson = (blocks: import('../src/content/types').Block[]) => ({
+      id: 'a', sectionId: 's', part: 1, parts: 1, title: { en: '' },
+      steps: [{ kind: 'content' as const, sectionId: 's', blocks }],
+    })
+    const takeaways = { type: 'takeaways' as const, label: { en: 'K' }, items: [{ en: 'one', ar: 'واحد' }] }
+    expect(lessonRecap(lesson([{ type: 'html', html: { en: '<strong>x</strong>' } }, takeaways]))).toEqual({ kind: 'takeaways', items: takeaways.items })
+    const html = { en: '<p><strong>ATS</strong> and <strong>keywords</strong>, <strong>ATS</strong></p>', ar: '<p><strong>ATS</strong> و<strong>الكلمات</strong>، <strong>ATS</strong></p>' }
+    expect(lessonRecap(lesson([{ type: 'html', html }]))).toEqual({
+      kind: 'terms',
+      items: [{ en: 'ATS', ar: 'ATS' }, { en: 'keywords', ar: 'الكلمات' }],
+    })
+    expect(lessonRecap(lesson([{ type: 'html', html: { en: '<p>plain</p>' } }]))).toBeNull()
+  })
+
+  it('continues a course in the chapter already started, else the first unfinished one', async () => {
+    const { nextInCourse, lessonKey } = await import('../src/features/lesson/lessons')
+    const weeks = (await allWeeks()).filter((w) => w.courseId === 'tech-interview')
+    expect(nextInCourse('tech-interview', weeks, [])).toMatchObject({ week: { id: 'resume' }, lesson: { id: 'overview' } })
+    const started = [lessonKey('tech-interview', 'dsa', 'approach')]
+    expect(nextInCourse('tech-interview', weeks, started)).toMatchObject({ week: { id: 'dsa' }, lesson: { id: 'big-o' } })
+    const all = weeks.flatMap((w) => lessonsFor(w).map((l) => lessonKey('tech-interview', w.id, l.id)))
+    expect(nextInCourse('tech-interview', weeks, all)).toBeNull()
+  })
+})

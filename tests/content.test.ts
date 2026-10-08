@@ -94,4 +94,11 @@ describe('course content', () => {
       }
     }
   })
+
+  it('every course says who it is for, in both languages', () => {
+    for (const course of courses) {
+      expect(course.audience?.en, course.id).toBeTruthy()
+      expect(course.audience?.ar, course.id).toBeTruthy()
+    }
+  })
 })

@@ -1,202 +1,354 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { flatNav, getCourse, hasWeek, moduleHref, practiceHref, type NavItem } from '../../content/courses'
-import type { Week } from '../../content/types'
+import { ProgressRing } from '../../components/ProgressRing'
+import { flatNav, getCourse, hasWeek, moduleHref, practiceHref, type Course, type NavItem } from '../../content/courses'
+import type { Localized, Week } from '../../content/types'
 import { useLocalized } from '../../content/useLocalized'
 import { useWeeks } from '../../content/useWeek'
-import { learnHref, lessonsFor, type Lesson } from '../lesson/lessons'
+import { formatDuration, learnHref, lessonMinutes, lessonsFor, moduleMinutes, nextInCourse, type Lesson } from '../lesson/lessons'
+import { mistakes } from '../progress/store'
 import { useProgress } from '../progress/useProgress'
-import { nodeOffset, unitStates, type NodeState } from './pathStates'
+import { unitStates, type NodeState } from './pathStates'
 import styles from './CoursePage.module.css'
 
-/** Banner colours, cycled per unit. */
-const UNIT_TONES = [styles.toneTeal, styles.toneLav, styles.toneAmber, styles.toneGreen]
-const ICONS: Record<NodeState, string> = { done: '✓', current: '★', locked: '🔒' }
-
-interface UnitData {
+interface Chapter {
   item: NavItem
   number: number
-  lessons?: Lesson[]
-  states?: NodeState[]
+  week?: Week
+  lessons: Lesson[]
+  states: NodeState[]
+  done: number
 }
 
-/**
- * A course as a Duolingo-style roadmap. Each module is a unit (banner) and each of its sections a lesson node
- * (long sections are split into parts). Lessons unlock in order within a unit; units are independent.
- */
+/** A course as a journey: an overview header, then a timeline of chapters (modules), each opening into its
+ *  lessons. Lessons unlock in order within a chapter; chapters are independent. */
 export function CoursePage() {
   const { courseId } = useParams<{ courseId: string }>()
   const { t: tUi } = useTranslation()
-  const t = useLocalized()
-  const { progress, reset } = useProgress()
   const course = getCourse(courseId)
-  const weeks: Record<string, Week> = useWeeks(courseId ?? '', course ? flatNav(course).map((i) => i.id) : [])
+  const ids = course ? flatNav(course).map((i) => i.id) : []
+  const weeks: Record<string, Week> = useWeeks(courseId ?? '', ids)
+  const { progress } = useProgress()
 
   if (!course) return <p>{tUi('pageNotFound')}</p>
 
-  // Unit numbers run through the whole course; the "Start" bubble goes on the first unfinished unit.
-  const units = new Map<string, UnitData>()
-  let startUnit: string | undefined
-  flatNav(course).forEach((item, i) => {
+  const chapters: Chapter[] = flatNav(course).map((item, i) => {
     const week = weeks[item.id]
-    const lessons = week ? lessonsFor(week) : undefined
-    const states = lessons && unitStates(lessons.map((l) => l.id), progress.lessonsDone, `${course.id}/${item.id}`)
-    if (!startUnit && states?.includes('current')) startUnit = item.id
-    units.set(item.id, { item, number: i + 1, lessons, states })
+    const lessons = week ? lessonsFor(week) : []
+    const states = unitStates(lessons.map((l) => l.id), progress.lessonsDone, `${course.id}/${item.id}`)
+    return { item, number: i + 1, week, lessons, states, done: states.filter((s) => s === 'done').length }
   })
-  let node = 0 // node index across the whole course, so the path keeps winding between units
+  const written = chapters.filter((c) => hasWeek(course.id, c.item.id))
+  const loaded = written.every((c) => c.week)
+  const next = loaded ? nextInCourse(course.id, written.map((c) => c.week!), progress.lessonsDone) : null
+
+  return (
+    <div className={styles.page}>
+      <CourseHeader course={course} chapters={written} loaded={loaded} next={next} />
+      <Timeline course={course} chapters={chapters} currentId={next?.week.id} />
+    </div>
+  )
+}
+
+function CourseHeader({
+  course,
+  chapters,
+  loaded,
+  next,
+}: {
+  course: Course
+  chapters: Chapter[]
+  loaded: boolean
+  next: ReturnType<typeof nextInCourse>
+}) {
+  const t = useLocalized()
+  const { t: tUi } = useTranslation()
+  const { progress, reset } = useProgress()
+  const weeks = chapters.flatMap((c) => (c.week ? [c.week] : []))
+  const lessons = chapters.reduce((n, c) => n + c.lessons.length, 0)
+  const done = chapters.reduce((n, c) => n + c.done, 0)
+  const minutes = chapters.reduce((n, c) => n + moduleMinutes(c.lessons), 0)
+  const questionIds = weeks.flatMap((w) => w.questions.map((q) => q.id))
+  const wrong = mistakes(questionIds, progress.answers).length
+  const learn = whatYouLearn(weeks)
 
   function handleReset() {
     if (window.confirm(tUi('resetConfirm'))) reset()
   }
 
   return (
-    <div className={styles.page}>
-      <header className={styles.hero}>
-        <h1>{t(course.title)}</h1>
-        <p>{t(course.description)}</p>
-      </header>
+    <header className={styles.header}>
+      <p className={styles.kicker}>{tUi(`category.${course.category}`)}</p>
+      <h1>{t(course.title)}</h1>
+      <p className={styles.lede}>{t(course.description)}</p>
+
+      <dl className={styles.stats}>
+        <div>
+          <dt>{tUi('statChapters')}</dt>
+          <dd>{chapters.length}</dd>
+        </div>
+        <div>
+          <dt>{tUi('statLessons')}</dt>
+          <dd>{loaded ? lessons : '…'}</dd>
+        </div>
+        <div>
+          <dt>{tUi('statTime')}</dt>
+          <dd>{loaded ? formatDuration(minutes, tUi) : '…'}</dd>
+        </div>
+        <div>
+          <dt>{tUi('statQuestions')}</dt>
+          <dd>{loaded ? questionIds.length : '…'}</dd>
+        </div>
+      </dl>
+
+      <div className={styles.actions}>
+        {next ? (
+          <Link className={styles.cta} to={learnHref(course.id, next.week.id, next.lesson.id)}>
+            {done > 0 ? tUi('continueCourse') : tUi('startCourse')} <span aria-hidden>→</span>
+          </Link>
+        ) : (
+          loaded && lessons > 0 && <span className={styles.complete}>✓ {tUi('courseComplete')}</span>
+        )}
+        {wrong > 0 && (
+          <Link className={styles.secondaryBtn} to={`/course/${course.id}/review`}>
+            {tUi('reviewMistakes', { n: wrong })}
+          </Link>
+        )}
+        {loaded && lessons > 0 && (
+          <span className={styles.overall}>
+            <ProgressRing done={done} total={lessons} size={40} />
+            {tUi('lessonsDoneOf', { done, total: lessons })}
+          </span>
+        )}
+      </div>
+
+      {(learn.length > 0 || course.audience) && (
+        <div className={styles.about}>
+          {learn.length > 0 && (
+            <section>
+              <h2>{tUi('whatYouLearn')}</h2>
+              <ul className={styles.learnList}>
+                {learn.map((item, i) => (
+                  <li key={i}>{t(item)}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {course.audience && (
+            <section>
+              <h2>{tUi('whoItsFor')}</h2>
+              <p>{t(course.audience)}</p>
+            </section>
+          )}
+        </div>
+      )}
+
       {course.notice && (
         <p className={styles.notice} role="note">
           {t(course.notice)}
         </p>
       )}
-      {course.groups.map((group) => (
-        <section key={t(group.label)} className={styles.group}>
-          <h2 className={styles.groupLabel}>{t(group.label)}</h2>
-          {group.items.map((item) => {
-            const unit = units.get(item.id)!
-            const offsets = unit.lessons?.map(() => nodeOffset(node++)) ?? []
-            return (
-              <Unit
-                key={item.id}
-                courseId={course.id}
-                unit={unit}
-                week={weeks[item.id]}
-                offsets={offsets}
-                showStart={item.id === startUnit}
-              />
-            )
-          })}
-        </section>
-      ))}
       <button type="button" className={styles.reset} onClick={handleReset}>
         {tUi('resetProgress')}
       </button>
+    </header>
+  )
+}
+
+/** Up to 6 learning goals: the first `objectives` block of each module, taken round-robin so every
+ *  chapter is represented. */
+function whatYouLearn(weeks: Week[]): Localized[] {
+  const lists = weeks.map((w) => {
+    for (const s of w.sections) for (const b of s.blocks) if (b.type === 'objectives') return b.items
+    return []
+  })
+  const out: Localized[] = []
+  for (let i = 0; out.length < 6 && lists.some((l) => i < l.length); i++) {
+    for (const list of lists) if (i < list.length && out.length < 6) out.push(list[i])
+  }
+  return out
+}
+
+
+function Timeline({ course, chapters, currentId }: { course: Course; chapters: Chapter[]; currentId?: string }) {
+  const t = useLocalized()
+  const { t: tUi } = useTranslation()
+  // null: follow the default (only the current chapter open); after a toggle, the reader's own choice.
+  const [open, setOpen] = useState<Set<string> | null>(null)
+  const isOpen = (id: string) => (open ? open.has(id) : id === currentId)
+  const toggle = (id: string) =>
+    setOpen((prev) => {
+      const next = new Set(prev ?? (currentId ? [currentId] : []))
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+
+  return (
+    <div className={styles.journey}>
+      {course.groups.map((group, g) => (
+        <section key={t(group.label)} className={styles.part}>
+          <h2 className={styles.partLabel}>
+            {tUi('partN', { n: g + 1 })} · {t(group.label)}
+          </h2>
+          <ol className={styles.timeline}>
+            {group.items.map((item) => {
+              const chapter = chapters.find((c) => c.item.id === item.id)!
+              return (
+                <ChapterStop
+                  key={item.id}
+                  courseId={course.id}
+                  chapter={chapter}
+                  open={isOpen(item.id)}
+                  onToggle={() => toggle(item.id)}
+                />
+              )
+            })}
+          </ol>
+        </section>
+      ))}
     </div>
   )
 }
 
-function Unit({
+function ChapterStop({
   courseId,
-  unit,
-  week,
-  offsets,
-  showStart,
+  chapter,
+  open,
+  onToggle,
 }: {
   courseId: string
-  unit: UnitData
-  week?: Week
-  offsets: number[]
-  showStart: boolean
+  chapter: Chapter
+  open: boolean
+  onToggle: () => void
 }) {
   const t = useLocalized()
   const { t: tUi } = useTranslation()
-  const { item, number, lessons, states } = unit
-  const tone = UNIT_TONES[(number - 1) % UNIT_TONES.length]
+  const { item, number, week, lessons, states, done } = chapter
 
-  // Not written yet (no loader): a grey banner, no lessons.
   if (!hasWeek(courseId, item.id)) {
     return (
-      <div className={styles.unit}>
-        <div className={`${styles.banner} ${styles.bannerSoon}`}>
-          <span className={styles.unitNo}>{tUi('unit', { n: number })}</span>
+      <li className={`${styles.chapter} ${styles.soon}`}>
+        <span className={styles.stop} aria-hidden />
+        <div className={styles.chapterCard}>
+          <p className={styles.chapterNo}>{tUi('chapterN', { n: number })}</p>
           <h3>{t(item.title)}</h3>
-          <span className={styles.badge}>{tUi('soon')}</span>
+          <p className={styles.chapterMeta}>{tUi('comingSoon')}</p>
         </div>
-      </div>
+      </li>
     )
   }
 
-  const done = states?.filter((s) => s === 'done').length ?? 0
-  const total = lessons?.length ?? 0
+  const total = lessons.length
+  const stage = !week ? 'new' : done === total ? 'done' : done > 0 ? 'started' : 'new'
+  const target = lessons.find((_, i) => states[i] === 'current') ?? lessons[0]
+  const action = stage === 'done' ? tUi('chapterReview') : stage === 'started' ? tUi('chapterContinue') : tUi('chapterStart')
+  const listId = `lessons-${item.id}`
 
   return (
-    <div className={styles.unit}>
-      <div className={`${styles.banner} ${tone}`}>
-        <span className={styles.unitNo}>{tUi('unit', { n: number })}</span>
-        <h3>{t(item.title)}</h3>
-        <div className={styles.bannerRow}>
-          {lessons && (
-            <span className={styles.unitProgress}>
-              <span className={styles.bannerBar} aria-hidden>
-                <span style={{ width: `${total ? (done / total) * 100 : 0}%` }} />
-              </span>
-              {tUi('unitLessons', { done, total })}
-            </span>
-          )}
-          <span className={styles.bannerLinks}>
-            <Link to={moduleHref(courseId, item.id)}>{tUi('readModule')}</Link>
-            {week && week.questions.length > 0 && <Link to={practiceHref(courseId, item.id)}>{tUi('practice')}</Link>}
-          </span>
+    <li className={`${styles.chapter} ${styles[stage]}`}>
+      <span className={styles.stop} aria-hidden />
+      <div className={styles.chapterCard}>
+        <div className={styles.chapterHead}>
+          <div>
+            <p className={styles.chapterNo}>{tUi('chapterN', { n: number })}</p>
+            <h3>{t(item.title)}</h3>
+            {week && (
+              <p className={styles.chapterMeta}>
+                {formatDuration(moduleMinutes(lessons), tUi)} · {tUi('nLessons', { count: total })}
+              </p>
+            )}
+          </div>
+          {week && <ProgressRing done={done} total={total} />}
         </div>
+
+        {week && (
+          <div className={styles.chapterActions}>
+            <Link
+              className={stage === 'done' ? styles.secondaryBtn : styles.primaryBtn}
+              to={learnHref(courseId, item.id, target.id)}
+            >
+              {action}
+            </Link>
+            <Link className={styles.textLink} to={moduleHref(courseId, item.id)}>
+              {tUi('readModule')}
+            </Link>
+            {week.questions.length > 0 && (
+              <Link className={styles.textLink} to={practiceHref(courseId, item.id)}>
+                {tUi('practice')}
+              </Link>
+            )}
+            <button
+              type="button"
+              className={styles.toggle}
+              aria-expanded={open}
+              aria-controls={listId}
+              onClick={onToggle}
+            >
+              {open ? tUi('hideLessons') : tUi('showLessons')}
+              <span aria-hidden className={styles.chevron}>
+                ▾
+              </span>
+            </button>
+          </div>
+        )}
+
+        {week && open && (
+          <ol id={listId} className={styles.lessons}>
+            {lessons.map((lesson, i) => (
+              <LessonRow
+                key={lesson.id}
+                href={learnHref(courseId, item.id, lesson.id)}
+                lesson={lesson}
+                state={states[i]}
+                index={i + 1}
+              />
+            ))}
+          </ol>
+        )}
       </div>
-      {lessons && states ? (
-        <ol className={styles.path}>
-          {lessons.map((lesson, i) => (
-            <LessonNode
-              key={lesson.id}
-              href={learnHref(courseId, item.id, lesson.id)}
-              lesson={lesson}
-              state={states[i]}
-              offset={offsets[i]}
-              showStart={showStart && states[i] === 'current'}
-            />
-          ))}
-        </ol>
-      ) : (
-        <p className={styles.unitLoading}>{tUi('loading')}</p>
-      )}
-    </div>
+    </li>
   )
 }
 
-function LessonNode({
+function LessonRow({
   href,
   lesson,
   state,
-  offset,
-  showStart,
+  index,
 }: {
   href: string
   lesson: Lesson
   state: NodeState
-  offset: number
-  showStart: boolean
+  index: number
 }) {
   const t = useLocalized()
   const { t: tUi } = useTranslation()
   const title =
     lesson.parts > 1 ? tUi('lessonOfParts', { title: t(lesson.title), n: lesson.part, of: lesson.parts }) : t(lesson.title)
-
+  const icon = state === 'done' ? '✓' : state === 'current' ? '▶' : '🔒'
+  const body = (
+    <>
+      <span className={styles.rowIcon} aria-hidden>
+        {icon}
+      </span>
+      <span className={styles.rowIndex}>{String(index).padStart(2, '0')}</span>
+      <span className={styles.rowTitle}>{title}</span>
+      <span className={styles.rowTime}>{tUi('minutes', { n: lessonMinutes(lesson) })}</span>
+    </>
+  )
   return (
-    <li className={styles.nodeWrap} style={{ insetInlineStart: offset }}>
-      {showStart && <span className={styles.startBubble}>{tUi('pathStart')}</span>}
+    <li>
       {state === 'locked' ? (
-        <span
-          className={`${styles.node} ${styles.locked}`}
-          role="img"
-          aria-label={`${title} (${tUi('pathLocked')})`}
-          title={tUi('pathLocked')}
-        >
-          <span aria-hidden>{ICONS.locked}</span>
+        <span className={`${styles.row} ${styles.rowLocked}`} title={tUi('pathLocked')} aria-label={`${title} (${tUi('pathLocked')})`}>
+          {body}
         </span>
       ) : (
-        <Link to={href} className={`${styles.node} ${styles[state]}`} aria-label={title}>
-          <span aria-hidden>{ICONS[state]}</span>
+        <Link to={href} className={`${styles.row} ${styles[`row_${state}`]}`}>
+          {body}
         </Link>
       )}
-      <span className={styles.nodeTitle}>{title}</span>
     </li>
   )
 }

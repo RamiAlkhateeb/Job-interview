@@ -2,21 +2,22 @@
   max-width: 560px;
 }
 .page h1 {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 2.2rem;
   margin: 0 0 24px 0;
   letter-spacing: -0.02em;
 }
 .group {
   background: var(--surface);
-  border: 2px solid var(--rule);
-  border-radius: 18px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   padding: 18px 20px;
   margin-bottom: 16px;
 }
 .group h2 {
-  font-size: 1.05rem;
-  font-weight: 800;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
   margin: 0 0 12px 0;
 }
 .group p {
@@ -33,12 +34,11 @@
   flex: 1;
   min-width: 110px;
   background: var(--surface);
-  border: 2px solid var(--rule);
-  border-bottom-width: 4px;
-  border-radius: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
   padding: 11px 14px;
   font: inherit;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--ink);
   cursor: pointer;
 }
@@ -46,9 +46,11 @@
   background: var(--paper-2);
 }
 .segmented button.on {
-  border-color: var(--teal);
-  background: var(--teal-bg);
-  color: var(--teal);
+  border-color: var(--brand);
+  background: var(--brand-bg);
+  color: var(--brand);
+  box-shadow: inset 0 0 0 1px var(--brand);
+  font-weight: 600;
 }
 .row {
   display: flex;
@@ -79,7 +81,7 @@
   transition: inset-inline-start 0.2s;
 }
 .switchOn {
-  background: var(--green);
+  background: var(--brand);
 }
 .switchOn span {
   inset-inline-start: 28px;

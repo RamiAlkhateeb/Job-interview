@@ -9,6 +9,10 @@ export const marketing: Course = {
     'Find the right customers and win them: segmentation and positioning, the marketing mix, the funnel, metrics, digital channels and sales.',
     'اعثر على العملاء المناسبين واكسبهم: التجزئة والتموضع، والمزيج التسويقي، ومسار التحويل، والمقاييس، والقنوات الرقمية، والمبيعات.',
   ),
+  audience: L(
+    'Founders, students and career-switchers who want the core ideas of marketing in plain language.',
+    'لروّاد الأعمال والطلاب ومن يغيّرون مسارهم المهني ويريدون أفكار التسويق الأساسية بلغة بسيطة.',
+  ),
   groups: [
     {
       label: L('Foundations', 'الأساسيات'),
