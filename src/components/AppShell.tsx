@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
-import { Outlet, useMatches } from 'react-router-dom'
+import { Link, Outlet, useMatches } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useWeek } from '../content/useWeek'
 import { getCourse } from '../content/courses'
 import { useLocalized } from '../content/useLocalized'
 import { useScrollSpy } from '../features/weeks/useScrollSpy'
+import { Logo } from './Logo'
 import { TopBar } from './TopBar'
 import { TopbarStart } from './TopbarStart'
 import { CourseContentsPanel } from './CourseContentsPanel'
@@ -27,7 +28,9 @@ function Sidebar({ courseId, moduleId }: { courseId?: string; moduleId?: string 
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.brand}>{tUi('appName')}</div>
+      <Link to="/" className={styles.brand} aria-label={tUi('home')}>
+        <Logo size={30} />
+      </Link>
       <div className={styles.brandSub}>{course ? t(course.title) : tUi('appTagline')}</div>
       {week ? (
         <nav>

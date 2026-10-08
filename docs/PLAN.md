@@ -7,7 +7,10 @@
 - Content validation tests (unique question IDs, answer ranges, every exercise resolves, Arabic present everywhere).
 - GitHub Actions: CI (PRs/branches) and Pages deploy from `master`; Dependabot; PR template.
 - Duolingo-style **Lesson mode** (`/course/:courseId/:moduleId/lesson`): 8 questions one at a time, instant feedback, score screen; XP (10 per correct, +20 perfect), daily streak (local midnight), Leitner boxes that make lessons favour unseen/missed questions. Streak + XP shown in the top bar.
-- **Roadmap** course page (Duolingo-style): each module is a unit banner (progress, Read, Practice) and each section a lesson node; long sections are split into parts of ≤ 7 cards. Lessons unlock in order within a unit; units are independent. Finished lessons are stored as `progress.lessonsDone` (`course/module/lessonId`).
+- **Masar identity**: navy + saffron on paper, Fraunces/Amiri display type, flat cards, generated course covers, new logo/favicon (`src/components/Logo.tsx`).
+- **Journey course page**: overview header (stats, what you'll learn, who it's for, Start/Continue, Review mistakes) and a timeline of chapters (modules) that open into lesson rows with status and minutes. Lessons unlock in order within a chapter; chapters are independent. Finished lessons: `progress.lessonsDone`.
+- **Home dashboard**: Continue card (from `progress.lastLesson`), 7-day XP strip (`progress.activity`), course cards with cover, chapters/lessons/time and a progress ring.
+- **Review mistakes** (`/course/:c/review`): replays questions whose latest answer was wrong. Lesson summary has a "What you learned" recap (takeaways or key terms).
 - **Bite-size lessons** for every module (`/course/:c/:m/learn/:lessonId`): content is cut automatically into one-idea cards (`src/features/lesson/chunks.ts`: each paragraph, list, box, table, code sample; headings and lead-ins ending in ":" stay with what follows; `cardBreak` forces a cut), then the questions on what that lesson showed. Finishing gives XP (5 + 10/correct + 20 perfect) and the streak; "Continue" opens the next lesson. The module URL stays the one-page reading view (print/PDF).
 - **Settings** page (`/settings`, ⚙ in the top bar): language, theme (light/dark/system), sound effects (synthesised with Web Audio, no files).
 
@@ -22,7 +25,7 @@ More course ideas: Project management, Negotiation, Business analytics (port fro
 Learning experience
 - **Review-missed mode**: a page that replays only questions answered wrongly (data is already in `progress.answers`).
 - **Spaced repetition** across modules: boxes already exist (`progress.boxes`); add a "Practice" lesson that pulls due questions from every module.
-- **Duolingo next steps**: hearts, daily XP goal, badges, Duolingo look & feel (palette, bigger type), more question types (true/false, fill-in-the-blank, ordering).
+- **Next for the journey**: daily goal ring, certificates per finished course, bookmarks/notes on cards, search across lessons, more question types (true/false, fill-in-the-blank, ordering), illustrations per chapter.
 - **Timed mock quiz**: random N questions across modules with a score screen.
 - **Search** across modules (Pagefind or MiniSearch, built at deploy time).
 - **Per-question explanations** shown after answering; **bookmarks / notes** per section.

@@ -35,6 +35,13 @@ export const router = createBrowserRouter(
           },
         },
         {
+          path: 'course/:courseId/review',
+          lazy: async () => {
+            const { ReviewPage } = await import('../features/lesson/ReviewPage')
+            return { element: <ReviewPage /> }
+          },
+        },
+        {
           path: 'settings',
           lazy: async () => {
             const { SettingsPage } = await import('../features/settings/SettingsPage')

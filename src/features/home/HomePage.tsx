@@ -1,23 +1,51 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { courses, type CourseCategory } from '../../content/courses'
+import { LogoMark } from '../../components/Logo'
+import { ProgressRing } from '../../components/ProgressRing'
+import { courses, flatNav, getCourse, hasWeek, type Course, type CourseCategory } from '../../content/courses'
+import type { Week } from '../../content/types'
 import { useLocalized } from '../../content/useLocalized'
+import { useWeeks } from '../../content/useWeek'
+import {
+  formatDuration,
+  learnHref,
+  lessonKey,
+  lessonMinutes,
+  lessonsFor,
+  moduleMinutes,
+  nextInCourse,
+  type Lesson,
+} from '../lesson/lessons'
+import { currentStreak, localDay, mistakes } from '../progress/store'
+import { useProgress } from '../progress/useProgress'
+import { CourseCover } from './CourseCover'
 import styles from './HomePage.module.css'
 
 /** Display order of the catalog's sections; a category with no courses is skipped. */
 const CATEGORIES: CourseCategory[] = ['careers', 'business']
 
-/** Course catalog, grouped by category. Open to everyone — no account needed. */
+/** Home: a dashboard (continue + this week) for returning learners, then the course catalog. */
 export function HomePage() {
   const { t: tUi } = useTranslation()
-  const t = useLocalized()
+  const { progress } = useProgress()
+  const [courseId, moduleId, lessonId] = progress.lastLesson?.split('/') ?? []
+  const resume = getCourse(courseId) ? { courseId, moduleId, lessonId } : undefined
 
   return (
-    <div>
+    <div className={styles.page}>
       <header className={styles.hero}>
-        <h1>{tUi('appName')}</h1>
+        <LogoMark size={48} />
+        <h1>{tUi('heroTitle')}</h1>
         <p>{tUi('homeIntro')}</p>
       </header>
+
+      {resume && (
+        <section className={styles.dashboard} aria-label={tUi('yourProgress')}>
+          <ContinueCard {...resume} />
+          <WeekCard />
+        </section>
+      )}
+
       {CATEGORIES.map((category) => {
         const inCategory = courses.filter((c) => c.category === category)
         if (inCategory.length === 0) return null
@@ -26,16 +54,154 @@ export function HomePage() {
             <h2 className={styles.categoryLabel}>{tUi(`category.${category}`)}</h2>
             <div className={styles.cards}>
               {inCategory.map((course) => (
-                <Link key={course.id} to={`/course/${course.id}`} className={styles.card}>
-                  <h3>{t(course.title)}</h3>
-                  <p>{t(course.description)}</p>
-                  <span className={styles.cardCta}>{tUi('openCourse')} →</span>
-                </Link>
+                <CourseCard key={course.id} course={course} />
               ))}
             </div>
           </section>
         )
       })}
     </div>
+  )
+}
+
+/** Written modules of a course, loaded, in course order (empty until all have loaded). */
+function useCourseWeeks(course: Course): Week[] {
+  const ids = flatNav(course)
+    .map((i) => i.id)
+    .filter((id) => hasWeek(course.id, id))
+  const weeks: Record<string, Week> = useWeeks(course.id, ids)
+  return ids.every((id) => weeks[id]) ? ids.map((id) => weeks[id]) : []
+}
+
+/** "Continue": the lesson after the one finished last, else the course's next unfinished lesson. */
+function ContinueCard({ courseId, moduleId, lessonId }: { courseId: string; moduleId: string; lessonId: string }) {
+  const t = useLocalized()
+  const { t: tUi } = useTranslation()
+  const { progress } = useProgress()
+  const course = getCourse(courseId)!
+  const weeks = useCourseWeeks(course)
+  if (weeks.length === 0) return <div className={styles.continueCard} aria-busy />
+
+  const isDone = (week: Week, lesson: Lesson) => progress.lessonsDone.includes(lessonKey(courseId, week.id, lesson.id))
+  const week = weeks.find((w) => w.id === moduleId)
+  const lessons = week ? lessonsFor(week) : []
+  const after = lessons.slice(lessons.findIndex((l) => l.id === lessonId) + 1).find((l) => week && !isDone(week, l))
+  const next = week && after ? { week, lesson: after } : nextInCourse(courseId, weeks, progress.lessonsDone)
+  const wrong = mistakes(
+    weeks.flatMap((w) => w.questions.map((q) => q.id)),
+    progress.answers,
+  ).length
+
+  if (!next) {
+    return (
+      <div className={styles.continueCard}>
+        <p className={styles.cardKicker}>{t(course.title)}</p>
+        <h2>{tUi('courseComplete')}</h2>
+        <Link className={styles.textLink} to={`/course/${courseId}`}>
+          {tUi('openCourse')} →
+        </Link>
+      </div>
+    )
+  }
+
+  const nav = flatNav(course)
+  const chapter = nav.findIndex((i) => i.id === next.week.id)
+  const title =
+    next.lesson.parts > 1
+      ? tUi('lessonOfParts', { title: t(next.lesson.title), n: next.lesson.part, of: next.lesson.parts })
+      : t(next.lesson.title)
+
+  return (
+    <div className={styles.continueCard}>
+      <p className={styles.cardKicker}>
+        {tUi('continueLabel')} · {t(course.title)}
+      </p>
+      <h2>{title}</h2>
+      <p className={styles.cardMeta}>
+        {tUi('chapterN', { n: chapter + 1 })} · {t(nav[chapter].title)} · {tUi('minutes', { n: lessonMinutes(next.lesson) })}
+      </p>
+      <div className={styles.cardActions}>
+        <Link className={styles.cta} to={learnHref(courseId, next.week.id, next.lesson.id)}>
+          {tUi('continueCourse')} <span aria-hidden>→</span>
+        </Link>
+        {wrong > 0 && (
+          <Link className={styles.textLink} to={`/course/${courseId}/review`}>
+            {tUi('reviewMistakes', { n: wrong })}
+          </Link>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/** The last 7 days of XP as bars, plus this week's XP, the streak and total XP. */
+function WeekCard() {
+  const { t: tUi, i18n } = useTranslation()
+  const { progress } = useProgress()
+  const today = new Date()
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - (6 - i))
+    return { date, xp: progress.activity[localDay(date)] ?? 0 }
+  })
+  const weekXp = days.reduce((n, d) => n + d.xp, 0)
+  const max = Math.max(50, ...days.map((d) => d.xp))
+  const weekday = new Intl.DateTimeFormat(i18n.language, { weekday: 'narrow' })
+
+  return (
+    <div className={styles.weekCard}>
+      <p className={styles.cardKicker}>{tUi('thisWeek')}</p>
+      <div className={styles.bars} role="img" aria-label={tUi('weekXp', { n: weekXp })}>
+        {days.map((d, i) => (
+          <div key={i} className={`${styles.barCol} ${i === 6 ? styles.today : ''}`}>
+            <span className={styles.bar}>
+              <span style={{ height: `${(d.xp / max) * 100}%` }} />
+            </span>
+            <span className={styles.barDay}>{weekday.format(d.date)}</span>
+          </div>
+        ))}
+      </div>
+      <dl className={styles.weekStats}>
+        <div>
+          <dt>{tUi('weekXpLabel')}</dt>
+          <dd>{weekXp}</dd>
+        </div>
+        <div>
+          <dt>{tUi('streak')}</dt>
+          <dd>🔥 {currentStreak(progress.streak, localDay())}</dd>
+        </div>
+        <div>
+          <dt>{tUi('totalXpLabel')}</dt>
+          <dd>{progress.xp}</dd>
+        </div>
+      </dl>
+    </div>
+  )
+}
+
+function CourseCard({ course }: { course: Course }) {
+  const t = useLocalized()
+  const { t: tUi } = useTranslation()
+  const { progress } = useProgress()
+  const weeks = useCourseWeeks(course)
+  const lessons = weeks.flatMap((w) => lessonsFor(w).map((l) => ({ w, l })))
+  const done = lessons.filter(({ w, l }) => progress.lessonsDone.includes(lessonKey(course.id, w.id, l.id))).length
+  const minutes = weeks.reduce((n, w) => n + moduleMinutes(lessonsFor(w)), 0)
+  const chapters = flatNav(course).filter((i) => hasWeek(course.id, i.id)).length
+
+  return (
+    <Link to={`/course/${course.id}`} className={styles.card}>
+      <CourseCover seed={course.id} />
+      <div className={styles.cardBody}>
+        <div className={styles.cardTop}>
+          <h3>{t(course.title)}</h3>
+          {weeks.length > 0 && <ProgressRing done={done} total={lessons.length} size={40} />}
+        </div>
+        <p>{t(course.description)}</p>
+        <span className={styles.cardMeta}>
+          {tUi('nChapters', { count: chapters })}
+          {weeks.length > 0 && ` · ${tUi('nLessons', { count: lessons.length })} · ${formatDuration(minutes, tUi)}`}
+        </span>
+      </div>
+    </Link>
   )
 }

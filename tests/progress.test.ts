@@ -8,13 +8,15 @@ import {
   localDay,
   markRead,
   MAX_BOX,
+  addActivity,
+  mistakes,
   parseProgress,
   pickLessonQuestions,
   recordAnswer,
   recordReview,
 } from '../src/features/progress/store'
 
-const EMPTY = { answers: {}, sectionsRead: {}, xp: 0, streak: { count: 0, lastDay: '' }, boxes: {}, lessonsDone: [] }
+const EMPTY = { answers: {}, sectionsRead: {}, xp: 0, streak: { count: 0, lastDay: '' }, boxes: {}, lessonsDone: [], activity: {} }
 
 describe('progress store helpers', () => {
   it('parses missing or corrupt storage as empty progress', () => {
@@ -107,3 +109,31 @@ describe('lesson helpers', () => {
     expect(pickLessonQuestions(['a', 'b'], {}, 10)).toHaveLength(2)
   })
 })
+
+describe('dashboard data', () => {
+  it('records the finished lesson and the day’s XP', () => {
+    const p = completeLesson(parseProgress(null), 2, 2, '2026-10-08', 'tech-interview/resume/template')
+    expect(p.lastLesson).toBe('tech-interview/resume/template')
+    expect(p.activity).toEqual({ '2026-10-08': 45 })
+    const practice = completeLesson(p, 0, 1, '2026-10-08') // Practice: no lesson key
+    expect(practice.lastLesson).toBe('tech-interview/resume/template')
+    expect(practice.activity['2026-10-08']).toBe(50)
+  })
+
+  it('keeps 60 days of activity', () => {
+    const a = addActivity({ '2026-08-01': 10, '2026-09-01': 20 }, '2026-10-08', 5)
+    expect(a).toEqual({ '2026-09-01': 20, '2026-10-08': 5 })
+  })
+
+  it('parses saved progress without the dashboard fields', () => {
+    const p = parseProgress(JSON.stringify({ lastLesson: 3, activity: [] }))
+    expect(p.lastLesson).toBeUndefined()
+    expect(p.activity).toEqual({})
+  })
+
+  it('lists questions whose latest answer was wrong, in the given order', () => {
+    const answers = { b: { selected: 1, correct: false }, a: { selected: 0, correct: false }, c: { selected: 0, correct: true } }
+    expect(mistakes(['a', 'b', 'c', 'd'], answers)).toEqual(['a', 'b'])
+  })
+})
+

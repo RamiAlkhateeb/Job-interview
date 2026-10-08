@@ -9,6 +9,10 @@ export const entrepreneurship: Course = {
     'From idea to a business that works: validating the idea, business models, pricing, unit economics and funding.',
     'من الفكرة إلى عمل ناجح: التحقق من الفكرة، ونماذج الأعمال، والتسعير، واقتصاديات الوحدة، والتمويل.',
   ),
+  audience: L(
+    'Anyone with a business idea who wants to test it cheaply before spending months building it.',
+    'لكل من لديه فكرة مشروع ويريد اختبارها بتكلفة قليلة قبل قضاء أشهر في بنائها.',
+  ),
   groups: [
     {
       label: L('Find the idea', 'إيجاد الفكرة'),

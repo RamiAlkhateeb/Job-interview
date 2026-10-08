@@ -9,6 +9,10 @@ export const accounting: Course = {
     'Read the numbers behind any business: the three financial statements, bookkeeping, key ratios and cash-flow management.',
     'اقرأ الأرقام وراء أي عمل: القوائم المالية الثلاث، ومسك الدفاتر، والنسب الأساسية، وإدارة التدفق النقدي.',
   ),
+  audience: L(
+    'Founders, freelancers and anyone who wants to read a company\'s numbers with confidence — no accounting background needed.',
+    'لروّاد الأعمال والمستقلين وكل من يريد قراءة أرقام الشركات بثقة — دون الحاجة إلى خلفية محاسبية.',
+  ),
   groups: [
     {
       label: L('Foundations', 'الأساسيات'),

@@ -19,7 +19,7 @@
   background: var(--surface);
 }
 a.btn:hover {
-  border-color: var(--teal);
+  border-color: var(--brand);
 }
 .next {
   text-align: end;

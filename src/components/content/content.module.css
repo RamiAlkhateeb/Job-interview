@@ -19,8 +19,8 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--teal);
-  background: var(--teal-bg);
+  color: var(--brand);
+  background: var(--brand-bg);
   padding: 4px 12px;
   border-radius: 100px;
 }
@@ -67,8 +67,8 @@
 .content code {
   font-family: 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 0.92em;
-  color: var(--teal);
-  background: var(--teal-bg);
+  color: var(--brand);
+  background: var(--brand-bg);
   padding: 0.1em 0.35em;
   border-radius: 4px;
   direction: ltr;
@@ -161,11 +161,11 @@
   color: var(--amber);
 }
 .example {
-  background: var(--teal-bg);
-  border-inline-start: 5px solid var(--teal);
+  background: var(--brand-bg);
+  border-inline-start: 5px solid var(--brand);
 }
 .example .boxLabel {
-  color: var(--teal);
+  color: var(--brand);
 }
 
 .codeBlock {
@@ -210,9 +210,9 @@
   background: rgba(255, 255, 255, 0.16);
 }
 .codeCopyBtn.copied {
-  background: var(--teal);
-  border-color: var(--teal);
-  color: #fff;
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
 }
 
 .diagram {
@@ -255,7 +255,7 @@
 
 .exercise {
   background: var(--surface);
-  border: 2px dashed var(--teal);
+  border: 2px dashed var(--brand);
   border-radius: 10px;
   padding: 18px 20px;
   margin: 22px 0;
@@ -274,7 +274,7 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--teal);
+  color: var(--brand);
 }
 .exerciseQ {
   font-weight: 700;
@@ -295,12 +295,12 @@
 }
 .exerciseOptions input[type='radio'] {
   margin-top: 3px;
-  accent-color: var(--teal);
+  accent-color: var(--brand);
   flex-shrink: 0;
 }
 .exerciseSubmit {
-  background: var(--teal);
-  color: #fff;
+  background: var(--brand);
+  color: var(--on-brand);
   border: none;
   padding: 9px 20px;
   border-radius: 100px;
@@ -341,7 +341,7 @@
   margin-bottom: 36px;
 }
 .cover .kicker {
-  color: var(--teal);
+  color: var(--brand);
   font-weight: 700;
   font-size: 13px;
   letter-spacing: 0.08em;
@@ -357,7 +357,7 @@
 }
 .cover h1 em {
   font-style: normal;
-  color: var(--teal);
+  color: var(--brand);
   display: block;
 }
 .cover :global(.lede) {
@@ -398,8 +398,8 @@
   cursor: pointer;
 }
 .toolBtn:hover {
-  border-color: var(--teal);
-  color: var(--teal);
+  border-color: var(--brand);
+  color: var(--brand);
 }
 
 /* ---------- FORMULA (no equivalent in the original CSS — new, styled to match the code/box family) ---------- */
@@ -418,7 +418,7 @@
   font-family: 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--teal);
+  color: var(--brand);
   direction: ltr;
 }
 .formulaNote {
@@ -478,8 +478,8 @@
   border-bottom: 3px solid transparent;
 }
 .tabHeads button.tabActive {
-  color: var(--teal);
-  border-bottom-color: var(--teal);
+  color: var(--brand);
+  border-bottom-color: var(--brand);
   background: var(--surface);
 }
 .tabPanel {
@@ -506,7 +506,7 @@
     content: attr(data-print-label);
     display: block;
     font-weight: 800;
-    color: var(--teal);
+    color: var(--brand);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -521,15 +521,13 @@
 }
 .quizCta a {
   display: inline-block;
-  background: var(--teal);
-  color: #fff;
-  font-weight: 800;
+  background: var(--accent);
+  color: #1b1b1f;
+  font-weight: 600;
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 12px 28px;
-  border-radius: 14px;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+  padding: 11px 24px;
+  border-radius: 100px;
+  box-shadow: var(--shadow);
 }
 @media print {
   .quizCta {

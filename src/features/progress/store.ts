@@ -21,6 +21,10 @@ export interface Progress {
   boxes: Record<string, number>
   /** `${courseId}/${moduleId}/${lessonId}` of every finished roadmap lesson (see src/features/lesson/lessons.ts) */
   lessonsDone: string[]
+  /** Key of the roadmap lesson finished most recently: Home's "Continue" starts from the lesson after it */
+  lastLesson?: string
+  /** XP earned per local day ('YYYY-MM-DD'), last ACTIVITY_DAYS days: Home's week strip */
+  activity: Record<string, number>
 }
 
 // Still v1: the lesson fields were added with defaults, so older saved progress parses unchanged.
@@ -32,6 +36,7 @@ const empty: Progress = {
   streak: { count: 0, lastDay: '' },
   boxes: {},
   lessonsDone: [],
+  activity: {},
 }
 
 export const MAX_BOX = 5
@@ -57,6 +62,8 @@ export function parseProgress(raw: string | null): Progress {
       },
       boxes: isRecord(data.boxes) ? (data.boxes as Progress['boxes']) : {},
       lessonsDone: Array.isArray(data.lessonsDone) ? data.lessonsDone.filter((k) => typeof k === 'string') : [],
+      ...(typeof data.lastLesson === 'string' ? { lastLesson: data.lastLesson } : {}),
+      activity: isRecord(data.activity) ? (data.activity as Progress['activity']) : {},
     }
   } catch {
     return empty
@@ -120,8 +127,33 @@ export function completeLesson(
   lessonKey?: string,
 ): Progress {
   const lessonsDone = lessonKey && !p.lessonsDone.includes(lessonKey) ? [...p.lessonsDone, lessonKey] : p.lessonsDone
-  return { ...p, xp: p.xp + lessonXp(correct, total), streak: bumpStreak(p.streak, today), lessonsDone }
+  const xp = lessonXp(correct, total)
+  return {
+    ...p,
+    xp: p.xp + xp,
+    streak: bumpStreak(p.streak, today),
+    lessonsDone,
+    lastLesson: lessonKey ?? p.lastLesson,
+    activity: addActivity(p.activity, today, xp),
+  }
 }
+
+/** Days of per-day XP kept for the week strip; older days are dropped. */
+export const ACTIVITY_DAYS = 60
+
+/** Adds XP to `today` and drops days more than ACTIVITY_DAYS old. */
+export function addActivity(activity: Record<string, number>, today: string, xp: number): Record<string, number> {
+  const next: Record<string, number> = {}
+  for (const [day, value] of Object.entries(activity)) {
+    if (daysBetween(day, today) < ACTIVITY_DAYS) next[day] = value
+  }
+  next[today] = (next[today] ?? 0) + xp
+  return next
+}
+
+/** Ids of the questions whose latest answer was wrong, in the given order: "Review mistakes". */
+export const mistakes = (questionIds: string[], answers: Progress['answers']) =>
+  questionIds.filter((id) => answers[id]?.correct === false)
 
 /** Up to `size` question ids for a lesson: never-seen and low-box questions first, ties shuffled. */
 export function pickLessonQuestions(

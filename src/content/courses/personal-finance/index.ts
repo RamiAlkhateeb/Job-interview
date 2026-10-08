@@ -9,6 +9,10 @@ export const personalFinance: Course = {
     'Take control of your own money: budgeting, an emergency fund, debt, credit and saving for big goals.',
     'تحكّم في أموالك: الميزانية، وصندوق الطوارئ، والديون، والائتمان، والادخار للأهداف الكبيرة.',
   ),
+  audience: L(
+    'Anyone who wants a simple system for their monthly money: a budget, savings on autopilot and an emergency fund.',
+    'لكل من يريد نظامًا بسيطًا لماله الشهري: ميزانية، وادخارًا تلقائيًا، وصندوق طوارئ.',
+  ),
   notice: L(
     'Educational content only — not financial advice. Rules and products differ by country; check local rules or a licensed adviser before acting.',
     'محتوى تعليمي فقط — وليس نصيحة مالية. تختلف القواعد والمنتجات من بلد لآخر؛ تحقّق من القواعد المحلية أو استشر مستشارًا مرخّصًا قبل التصرف.',
