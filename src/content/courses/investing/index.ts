@@ -4,6 +4,7 @@ import { L } from '../../helpers'
 export const investing: Course = {
   id: 'investing',
   category: 'business',
+  audiences: ['professionals'],
   title: L('Investing Fundamentals', 'أساسيات الاستثمار'),
   description: L(
     'How investing works: compounding, risk and return, the main asset classes, diversification, costs and the mistakes that hurt investors most.',

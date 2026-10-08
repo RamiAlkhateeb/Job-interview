@@ -3,6 +3,7 @@ import type { Course } from '../../courses'
 export const techInterview: Course = {
   id: 'tech-interview',
   category: 'careers',
+  audiences: ['job-seekers'],
   title: { en: 'Tech Interview Prep', ar: 'التحضير للمقابلات التقنية' },
   description: {
     en: 'Everything for a software-engineering job search: ATS-friendly resume, .NET interview questions with analogies, and the data-structure patterns behind coding rounds.',

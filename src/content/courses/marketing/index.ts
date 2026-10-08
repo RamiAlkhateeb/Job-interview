@@ -4,6 +4,7 @@ import { L } from '../../helpers'
 export const marketing: Course = {
   id: 'marketing',
   category: 'business',
+  audiences: ['entrepreneurs', 'professionals'],
   title: L('Marketing Fundamentals', 'أساسيات التسويق'),
   description: L(
     'Find the right customers and win them: segmentation and positioning, the marketing mix, the funnel, metrics, digital channels and sales.',

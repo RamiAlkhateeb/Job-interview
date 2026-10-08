@@ -4,6 +4,7 @@ import { L } from '../../helpers'
 export const entrepreneurship: Course = {
   id: 'entrepreneurship',
   category: 'business',
+  audiences: ['entrepreneurs'],
   title: L('Entrepreneurship', 'ريادة الأعمال'),
   description: L(
     'From idea to a business that works: validating the idea, business models, pricing, unit economics and funding.',

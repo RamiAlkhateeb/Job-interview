@@ -4,6 +4,7 @@ import { L } from '../../helpers'
 export const personalFinance: Course = {
   id: 'personal-finance',
   category: 'business',
+  audiences: ['professionals', 'job-seekers'],
   title: L('Personal Finance', 'التمويل الشخصي'),
   description: L(
     'Take control of your own money: budgeting, an emergency fund, debt, credit and saving for big goals.',

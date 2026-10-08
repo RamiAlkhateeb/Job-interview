@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { AudienceBadges } from '../../components/AudienceBadges'
 import { ProgressRing } from '../../components/ProgressRing'
 import { flatNav, getCourse, hasWeek, moduleHref, practiceHref, type Course, type NavItem } from '../../content/courses'
 import type { Localized, Week } from '../../content/types'
@@ -80,48 +81,57 @@ function CourseHeader({
   return (
     <header className={styles.header}>
       <p className={styles.kicker}>{tUi(`category.${course.category}`)}</p>
+      <AudienceBadges audiences={course.audiences} className={styles.audiences} />
       <h1>{t(course.title)}</h1>
       <p className={styles.lede}>{t(course.description)}</p>
 
-      <dl className={styles.stats}>
-        <div>
-          <dt>{tUi('statChapters')}</dt>
-          <dd>{chapters.length}</dd>
-        </div>
-        <div>
-          <dt>{tUi('statLessons')}</dt>
-          <dd>{loaded ? lessons : '…'}</dd>
-        </div>
-        <div>
-          <dt>{tUi('statTime')}</dt>
-          <dd>{loaded ? formatDuration(minutes, tUi) : '…'}</dd>
-        </div>
-        <div>
-          <dt>{tUi('statQuestions')}</dt>
-          <dd>{loaded ? questionIds.length : '…'}</dd>
-        </div>
-      </dl>
+      {chapters.length === 0 ? (
+        <p className={styles.comingNote} role="note">
+          <strong>{tUi('contentComing')}</strong> {tUi('contentComingNote')}
+        </p>
+      ) : (
+        <>
+          <dl className={styles.stats}>
+            <div>
+              <dt>{tUi('statChapters')}</dt>
+              <dd>{chapters.length}</dd>
+            </div>
+            <div>
+              <dt>{tUi('statLessons')}</dt>
+              <dd>{loaded ? lessons : '…'}</dd>
+            </div>
+            <div>
+              <dt>{tUi('statTime')}</dt>
+              <dd>{loaded ? formatDuration(minutes, tUi) : '…'}</dd>
+            </div>
+            <div>
+              <dt>{tUi('statQuestions')}</dt>
+              <dd>{loaded ? questionIds.length : '…'}</dd>
+            </div>
+          </dl>
 
-      <div className={styles.actions}>
-        {next ? (
-          <Link className={styles.cta} to={learnHref(course.id, next.week.id, next.lesson.id)}>
-            {done > 0 ? tUi('continueCourse') : tUi('startCourse')} <span aria-hidden>→</span>
-          </Link>
-        ) : (
-          loaded && lessons > 0 && <span className={styles.complete}>✓ {tUi('courseComplete')}</span>
-        )}
-        {wrong > 0 && (
-          <Link className={styles.secondaryBtn} to={`/course/${course.id}/review`}>
-            {tUi('reviewMistakes', { n: wrong })}
-          </Link>
-        )}
-        {loaded && lessons > 0 && (
-          <span className={styles.overall}>
-            <ProgressRing done={done} total={lessons} size={40} />
-            {tUi('lessonsDoneOf', { done, total: lessons })}
-          </span>
-        )}
-      </div>
+          <div className={styles.actions}>
+            {next ? (
+              <Link className={styles.cta} to={learnHref(course.id, next.week.id, next.lesson.id)}>
+                {done > 0 ? tUi('continueCourse') : tUi('startCourse')} <span aria-hidden>→</span>
+              </Link>
+            ) : (
+              loaded && lessons > 0 && <span className={styles.complete}>✓ {tUi('courseComplete')}</span>
+            )}
+            {wrong > 0 && (
+              <Link className={styles.secondaryBtn} to={`/course/${course.id}/review`}>
+                {tUi('reviewMistakes', { n: wrong })}
+              </Link>
+            )}
+            {loaded && lessons > 0 && (
+              <span className={styles.overall}>
+                <ProgressRing done={done} total={lessons} size={40} />
+                {tUi('lessonsDoneOf', { done, total: lessons })}
+              </span>
+            )}
+          </div>
+        </>
+      )}
 
       {(learn.length > 0 || course.audience) && (
         <div className={styles.about}>
@@ -149,9 +159,11 @@ function CourseHeader({
           {t(course.notice)}
         </p>
       )}
-      <button type="button" className={styles.reset} onClick={handleReset}>
-        {tUi('resetProgress')}
-      </button>
+      {chapters.length > 0 && (
+        <button type="button" className={styles.reset} onClick={handleReset}>
+          {tUi('resetProgress')}
+        </button>
+      )}
     </header>
   )
 }

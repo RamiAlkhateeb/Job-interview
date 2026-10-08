@@ -1,8 +1,18 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { AudienceBadges } from '../../components/AudienceBadges'
 import { LogoMark } from '../../components/Logo'
 import { ProgressRing } from '../../components/ProgressRing'
-import { courses, flatNav, getCourse, hasWeek, type Course, type CourseCategory } from '../../content/courses'
+import {
+  AUDIENCES,
+  courses,
+  flatNav,
+  getCourse,
+  hasWeek,
+  type AudienceId,
+  type Course,
+  type CourseCategory,
+} from '../../content/courses'
 import type { Week } from '../../content/types'
 import { useLocalized } from '../../content/useLocalized'
 import { useWeeks } from '../../content/useWeek'
@@ -22,7 +32,7 @@ import { CourseCover } from './CourseCover'
 import styles from './HomePage.module.css'
 
 /** Display order of the catalog's sections; a category with no courses is skipped. */
-const CATEGORIES: CourseCategory[] = ['careers', 'business']
+const CATEGORIES: CourseCategory[] = ['careers', 'business', 'management']
 
 /** Home: a dashboard (continue + this week) for returning learners, then the course catalog. */
 export function HomePage() {
@@ -30,6 +40,21 @@ export function HomePage() {
   const { progress } = useProgress()
   const [courseId, moduleId, lessonId] = progress.lastLesson?.split('/') ?? []
   const resume = getCourse(courseId) ? { courseId, moduleId, lessonId } : undefined
+  // Audience filter, kept in the URL (?for=professionals) so a filtered catalog can be shared.
+  const [search, setSearch] = useSearchParams()
+  const param = search.get('for')
+  const audience = AUDIENCES.find((a) => a === param)
+  const shown = audience ? courses.filter((c) => c.audiences.includes(audience)) : courses
+  const choose = (a?: AudienceId) =>
+    setSearch(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (a) next.set('for', a)
+        else next.delete('for')
+        return next
+      },
+      { replace: true, preventScrollReset: true },
+    )
 
   return (
     <div className={styles.page}>
@@ -46,8 +71,20 @@ export function HomePage() {
         </section>
       )}
 
+      <div className={styles.filter} role="group" aria-label={tUi('forAudience')}>
+        <span className={styles.filterLabel}>{tUi('forAudience')}</span>
+        <button type="button" aria-pressed={!audience} onClick={() => choose()}>
+          {tUi('audienceAll')} <span className={styles.count}>{courses.length}</span>
+        </button>
+        {AUDIENCES.map((a) => (
+          <button key={a} type="button" aria-pressed={audience === a} onClick={() => choose(a)}>
+            {tUi(`audience.${a}`)} <span className={styles.count}>{courses.filter((c) => c.audiences.includes(a)).length}</span>
+          </button>
+        ))}
+      </div>
+
       {CATEGORIES.map((category) => {
-        const inCategory = courses.filter((c) => c.category === category)
+        const inCategory = shown.filter((c) => c.category === category)
         if (inCategory.length === 0) return null
         return (
           <section key={category} className={styles.category}>
@@ -194,11 +231,18 @@ function CourseCard({ course }: { course: Course }) {
       <div className={styles.cardBody}>
         <div className={styles.cardTop}>
           <h3>{t(course.title)}</h3>
-          {weeks.length > 0 && <ProgressRing done={done} total={lessons.length} size={40} />}
+          {chapters === 0 ? (
+            <span className={styles.soonBadge}>{tUi('comingSoon')}</span>
+          ) : (
+            weeks.length > 0 && <ProgressRing done={done} total={lessons.length} size={40} />
+          )}
         </div>
+        <AudienceBadges audiences={course.audiences} />
         <p>{t(course.description)}</p>
         <span className={styles.cardMeta}>
-          {tUi('nChapters', { count: chapters })}
+          {chapters === 0
+            ? tUi('plannedChapters', { count: flatNav(course).length })
+            : tUi('nChapters', { count: chapters })}
           {weeks.length > 0 && ` · ${tUi('nLessons', { count: lessons.length })} · ${formatDuration(minutes, tUi)}`}
         </span>
       </div>
