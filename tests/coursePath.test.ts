@@ -1,22 +1,23 @@
 import { describe, expect, it } from 'vitest'
-import { getCourse } from '../src/content/courses'
-import { nodeOffset, pathStates } from '../src/features/course/pathStates'
+import { nodeOffset, unitStates } from '../src/features/course/pathStates'
 
-describe('skill path', () => {
-  const course = getCourse('tech-interview')!
+describe('roadmap', () => {
+  const ids = ['overview', 'template', 'content', 'keywords']
+  const prefix = 'tech-interview/resume'
 
-  it('makes the first written module current and later written ones locked', () => {
-    const s = pathStates(course, [])
-    expect(s.resume).toBe('current')
-    expect(s.dotnet).toBe('locked')
-    expect(s.behavioral).toBe('soon')
+  it('opens the first lesson of a fresh unit and locks the rest', () => {
+    expect(unitStates(ids, [], prefix)).toEqual(['current', 'locked', 'locked', 'locked'])
   })
 
-  it('moves "current" past finished modules', () => {
-    const s = pathStates(course, ['tech-interview/resume'])
-    expect(s.resume).toBe('done')
-    expect(s.dotnet).toBe('current')
-    expect(s.dsa).toBe('locked')
+  it('moves "current" past finished lessons; finished ones stay open', () => {
+    const done = [`${prefix}/overview`, `${prefix}/template`]
+    expect(unitStates(ids, done, prefix)).toEqual(['done', 'done', 'current', 'locked'])
+  })
+
+  it('treats each unit on its own', () => {
+    // Progress in another module does not unlock or lock this one.
+    expect(unitStates(ids, ['tech-interview/dsa/approach'], prefix)[0]).toBe('current')
+    expect(unitStates(ids, ids.map((id) => `${prefix}/${id}`), prefix)).toEqual(['done', 'done', 'done', 'done'])
   })
 
   it('winds back and forth', () => {

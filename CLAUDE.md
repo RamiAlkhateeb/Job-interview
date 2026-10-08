@@ -22,6 +22,7 @@ Vite + React + TypeScript study app with free courses for careers (tech intervie
 - Option display order is shuffled per question (`src/features/quiz/optionOrder.ts`); stored answers are always indices into `question.options`.
 - Finance courses (investing, personal finance) are educational only: no recommendations of specific products, figures labelled as illustrations, and the course `notice` keeps the not-financial-advice disclaimer.
 - Progress goes only through `src/features/progress/store.ts` (so a backend can replace it later).
+- Roadmap lessons come from `lessonsFor(week)` (`src/features/lesson/lessons.ts`); finished ones are saved as `course/module/lessonId` in `lessonsDone`, so changing how a section splits into parts can reset its ✓.
 - Deploy base path is `/<repo>/` (from `GITHUB_REPOSITORY`, fallback `/Courses/`) when `GITHUB_PAGES=true` (see `vite.config.ts`); use `import.meta.env.BASE_URL` / `resolveAssetPath`, never hard-code it.
 - No secrets are needed. If a backend is ever added, see `docs/PLAN.md` ("Later: accounts").
 

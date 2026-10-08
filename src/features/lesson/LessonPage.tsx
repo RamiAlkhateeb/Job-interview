@@ -103,8 +103,8 @@ function Lesson({ week, questions, onRestart }: { week: Week; questions: Questio
         courseId={week.courseId}
         correct={correctCount}
         total={questions.length}
-        againLabel={tUi('lessonAgain')}
-        onAgain={onRestart}
+        action={tUi('lessonAgain')}
+        onAction={onRestart}
       />
     )
   }

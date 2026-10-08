@@ -1,23 +1,18 @@
-import { flatNav, hasWeek, type Course } from '../../content/courses'
-
-export type NodeState = 'done' | 'current' | 'locked' | 'soon'
+export type NodeState = 'done' | 'current' | 'locked'
 
 /**
- * Skill-path state of each module, by id, in course order: finished lessons are `done`, the first written
- * module not done yet is `current`, written modules after it are `locked`, unwritten ones `soon`.
+ * Roadmap state of each lesson in one unit (module), in order: finished lessons are `done` (and can be
+ * replayed), the first unfinished one is `current`, the ones after it `locked`. Units don't lock each other,
+ * so any module can be started at its first lesson.
  */
-export function pathStates(course: Course, modulesDone: string[]): Record<string, NodeState> {
-  const states: Record<string, NodeState> = {}
+export function unitStates(lessonIds: string[], lessonsDone: string[], keyPrefix: string): NodeState[] {
   let currentFound = false
-  for (const item of flatNav(course)) {
-    if (!hasWeek(course.id, item.id)) states[item.id] = 'soon'
-    else if (modulesDone.includes(`${course.id}/${item.id}`)) states[item.id] = 'done'
-    else if (!currentFound) {
-      states[item.id] = 'current'
-      currentFound = true
-    } else states[item.id] = 'locked'
-  }
-  return states
+  return lessonIds.map((id) => {
+    if (lessonsDone.includes(`${keyPrefix}/${id}`)) return 'done'
+    if (currentFound) return 'locked'
+    currentFound = true
+    return 'current'
+  })
 }
 
 /** Sideways offset (px) of the n-th node, so the path winds like Duolingo's. Logical: mirrors in RTL. */

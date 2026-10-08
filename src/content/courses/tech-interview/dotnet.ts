@@ -438,7 +438,9 @@ const qa: QA[] = [
   },
 ]
 
-const blocksFor = (numbers: number[]): Block[] =>
+/** Q&A entries in order; `quiz` maps a Q&A number to the questions that test it, which follow right after it
+ *  (so a lesson only asks about what it has just shown). */
+const blocksFor = (numbers: number[], quiz: Record<number, number[]>): Block[] =>
   numbers.flatMap((n): Block[] => {
     const item = qa.find((x) => x.n === n)!
     return [
@@ -450,6 +452,7 @@ const blocksFor = (numbers: number[]): Block[] =>
         },
       },
       { type: 'box', variant: 'analogy', label: { en: 'Analogy', ar: 'التشبيه' }, html: item.analogy },
+      ...exercises(...(quiz[n] ?? [])),
     ]
   })
 
@@ -525,7 +528,7 @@ const section = (
   title: Localized,
   standfirst: Localized,
   numbers: number[],
-  quiz: number[],
+  quiz: Record<number, number[]>,
   timeEst: string,
 ): Section => ({
   id,
@@ -533,7 +536,7 @@ const section = (
   sectionLabel: label,
   timeEst: { en: timeEst, ar: timeEst },
   headingHtml: heading(title, standfirst),
-  blocks: [...blocksFor(numbers), ...exercises(...quiz)],
+  blocks: blocksFor(numbers, quiz),
 })
 
 export const dotnet: Week = {
@@ -572,15 +575,15 @@ export const dotnet: Week = {
     section('fundamentals', { en: 'Part 1', ar: 'الجزء ١' }, { en: 'Language & runtime', ar: 'اللغة وبيئة التشغيل' },
       { en: 'Language and runtime fundamentals', ar: 'أساسيات اللغة وبيئة التشغيل' },
       { en: 'Types, memory, exceptions and everyday language features.', ar: 'الأنواع والذاكرة والاستثناءات وميزات اللغة اليومية.' },
-      [1, 2, 5, 8, 11, 12, 16, 17, 18, 20, 21, 22], [1, 2, 3, 4, 10], '25 min'),
+      [1, 2, 5, 8, 11, 12, 16, 17, 18, 20, 21, 22], { 1: [1], 2: [2], 8: [3], 12: [10], 18: [4] }, '25 min'),
     section('async-perf', { en: 'Part 2', ar: 'الجزء ٢' }, { en: 'Async, concurrency & performance', ar: 'التزامن والأداء' },
       { en: 'Async, concurrency and performance', ar: 'البرمجة غير المتزامنة والتزامن والأداء' },
       { en: 'Writing responsive code and avoiding the classic traps.', ar: 'كتابة كود سريع الاستجابة وتجنب الفخاخ الشائعة.' },
-      [4, 19, 32, 34, 35, 31, 26, 27, 33, 6], [5, 6, 7, 8, 9, 19, 20], '20 min'),
+      [4, 19, 32, 34, 35, 31, 26, 27, 33, 6], { 4: [7], 32: [8], 34: [9], 31: [20], 26: [5], 33: [19], 6: [6] }, '20 min'),
     section('web-arch', { en: 'Part 3', ar: 'الجزء ٣' }, { en: 'Web & architecture', ar: 'الويب والعمارة' },
       { en: 'Web APIs and architecture', ar: 'واجهات الويب والعمارة' },
       { en: 'Dependency injection, the pipeline, security and distributed-system patterns.', ar: 'حقن التبعيات وخط الأنابيب والأمان وأنماط الأنظمة الموزعة.' },
-      [3, 7, 9, 10, 28, 13, 14, 15, 23, 24, 25, 29, 30], [11, 12, 13, 14, 15, 16, 17, 18], '20 min'),
+      [3, 7, 9, 10, 28, 13, 14, 15, 23, 24, 25, 29, 30], { 3: [11], 9: [13], 10: [12], 28: [14], 15: [16], 25: [15], 29: [17], 30: [18] }, '20 min'),
   ],
   questions,
 }

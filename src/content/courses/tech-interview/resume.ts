@@ -1,7 +1,6 @@
 // Source: the resume section of the original Arabic README (docs/content-sources/README.ar.md).
 // English is a translation of that text plus a few examples added for the course.
 import type { Week } from '../../types'
-import { cardBreak } from '../../helpers'
 import { COURSE_ID, cover, heading, html, mcq } from './helpers'
 
 const W = 'resume'
@@ -73,7 +72,6 @@ export const resume: Week = {
   id: W,
   courseId: COURSE_ID,
   order: 1,
-  layout: 'cards',
   cover: cover(
     { en: 'Getting hired · Module 1', ar: 'الحصول على الوظيفة · الوحدة 1' },
     { en: 'Resume &amp; ATS', ar: 'السيرة الذاتية و ATS' },
@@ -117,7 +115,6 @@ export const resume: Week = {
           en: '<p>Use a simple, clean template that applicant tracking systems can parse. Stick to standard fonts only — <strong>Arial</strong>, <strong>Calibri</strong> or <strong>Garamond</strong> — and never go below <strong>10 pt</strong> so it stays readable.</p>',
           ar: '<p>ابدأ باستخدام قالب سيرة ذاتية بسيط ومنسق بشكل يدعم أنظمة تتبع المتقدمين. استخدم خطوطًا قياسية فقط مثل <strong>Arial</strong> أو <strong>Calibri</strong> أو <strong>Garamond</strong>، وتأكد أن حجم الخط لا يقل عن <strong>10</strong> لضمان الوضوح عند القراءة.</p>',
         }),
-        cardBreak,
         {
           type: 'box',
           variant: 'mistake',
@@ -166,7 +163,6 @@ export const resume: Week = {
           en: '<p>Use keywords tied to the role you are applying for to raise the chance of passing the ATS. Put the most important skills and experience <strong>first</strong>, especially the ones the job description asks for.</p>',
           ar: '<p>استخدم كلمات مفتاحية مرتبطة بالوظيفة المطلوبة لزيادة فرصة مرور السيرة الذاتية عبر أنظمة ATS. قدّم أهم المهارات والخبرات في <strong>البداية</strong>، خاصة تلك المطلوبة في الوصف الوظيفي.</p>',
         }),
-        cardBreak,
         {
           type: 'box',
           variant: 'keypoint',
@@ -192,13 +188,11 @@ export const resume: Week = {
         }),
         { type: 'formula', eq: '[Company], [Location] | [Job Title] | [MM/YYYY – MM/YYYY]', note: { en: 'Header line of each job', ar: 'سطر العنوان لكل وظيفة' } },
         { type: 'code', code: 'Facebook, Singapore | Front End Engineering Lead | 08/2018 - Present' },
-        cardBreak,
         html({
           en: '<p>For each job include the scope of your duties and the skills you used, then your achievements, written so the result is visible:</p>',
           ar: '<p>لكل وظيفة، اذكر نطاق المهام والمهارات المستخدمة، ثم الإنجازات بأسلوب يوضح النتيجة:</p>',
         }),
         { type: 'formula', eq: '[Achievement]: [action taken] → [measurable result]', note: { en: 'Bullet formula', ar: 'صيغة النقطة' } },
-        cardBreak,
         {
           type: 'box',
           variant: 'example',
@@ -232,7 +226,6 @@ export const resume: Week = {
             [{ en: '<strong>Targeted Resume</strong>, <strong>Resume Shortlister</strong>', ar: '<strong>Targeted Resume</strong> و <strong>Resume Shortlister</strong>' }, { en: 'Matching a specific job and adding missing keywords', ar: 'مطابقة السيرة مع وظيفة محددة وإضافة الكلمات المفتاحية الناقصة' }],
           ],
         },
-        cardBreak,
         {
           type: 'takeaways',
           label: { en: 'Key takeaways', ar: 'أهم النقاط' },

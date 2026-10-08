@@ -27,6 +27,14 @@ export const router = createBrowserRouter(
           },
         },
         {
+          // A roadmap lesson: small cards from one section, then its questions.
+          path: 'course/:courseId/:moduleId/learn/:lessonId',
+          lazy: async () => {
+            const { LessonRoute } = await import('../features/lesson/CardLesson')
+            return { element: <LessonRoute /> }
+          },
+        },
+        {
           path: 'settings',
           lazy: async () => {
             const { SettingsPage } = await import('../features/settings/SettingsPage')

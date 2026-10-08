@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Outlet, useMatches, useSearchParams } from 'react-router-dom'
+import { Outlet, useMatches } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useWeek } from '../content/useWeek'
 import { getCourse } from '../content/courses'
@@ -21,10 +21,7 @@ function Sidebar({ courseId, moduleId }: { courseId?: string; moduleId?: string 
   const { t: tUi } = useTranslation()
   const t = useLocalized()
   const course = getCourse(courseId)
-  const { week: loaded } = useWeek(courseId, moduleId)
-  // A card lesson shows one card at a time, so there are no #section anchors to link to.
-  const [search] = useSearchParams()
-  const week = loaded?.layout === 'cards' && search.get('view') !== 'page' ? undefined : loaded
+  const { week } = useWeek(courseId, moduleId)
   const sectionIds = useMemo(() => week?.sections.map((s) => s.id) ?? [], [week])
   const activeId = useScrollSpy(sectionIds)
 

@@ -19,8 +19,8 @@ export interface Progress {
   streak: Streak
   /** questionId -> Leitner box (1 = shaky … MAX_BOX = known); lessons favour low boxes */
   boxes: Record<string, number>
-  /** `${courseId}/${moduleId}` of every module with a finished lesson; drives the course page's skill path */
-  modulesDone: string[]
+  /** `${courseId}/${moduleId}/${lessonId}` of every finished roadmap lesson (see src/features/lesson/lessons.ts) */
+  lessonsDone: string[]
 }
 
 // Still v1: the lesson fields were added with defaults, so older saved progress parses unchanged.
@@ -31,10 +31,12 @@ const empty: Progress = {
   xp: 0,
   streak: { count: 0, lastDay: '' },
   boxes: {},
-  modulesDone: [],
+  lessonsDone: [],
 }
 
 export const MAX_BOX = 5
+/** For finishing any lesson, so a reading-only lesson still counts. */
+export const LESSON_BASE_XP = 5
 export const XP_PER_CORRECT = 10
 export const XP_PERFECT_BONUS = 20
 
@@ -54,7 +56,7 @@ export function parseProgress(raw: string | null): Progress {
         lastDay: typeof streak.lastDay === 'string' ? streak.lastDay : '',
       },
       boxes: isRecord(data.boxes) ? (data.boxes as Progress['boxes']) : {},
-      modulesDone: Array.isArray(data.modulesDone) ? data.modulesDone.filter((k) => typeof k === 'string') : [],
+      lessonsDone: Array.isArray(data.lessonsDone) ? data.lessonsDone.filter((k) => typeof k === 'string') : [],
     }
   } catch {
     return empty
@@ -101,7 +103,7 @@ export function bumpStreak(streak: Streak, today: string): Streak {
 }
 
 export const lessonXp = (correct: number, total: number) =>
-  correct * XP_PER_CORRECT + (total > 0 && correct === total ? XP_PERFECT_BONUS : 0)
+  LESSON_BASE_XP + correct * XP_PER_CORRECT + (total > 0 && correct === total ? XP_PERFECT_BONUS : 0)
 
 /** Leitner step: a right answer moves the question up a box, a wrong one sends it back to box 1. */
 export function recordReview(p: Progress, questionId: string, correct: boolean): Progress {
@@ -109,16 +111,16 @@ export function recordReview(p: Progress, questionId: string, correct: boolean):
   return { ...p, boxes: { ...p.boxes, [questionId]: correct ? Math.min(box + 1, MAX_BOX) : 1 } }
 }
 
-/** Award a finished lesson's XP, count `today` towards the streak and mark the module (if given) done. */
+/** Award a finished lesson's XP, count `today` towards the streak and mark the roadmap lesson (if given) done. */
 export function completeLesson(
   p: Progress,
   correct: number,
   total: number,
   today: string,
-  moduleKey?: string,
+  lessonKey?: string,
 ): Progress {
-  const modulesDone = moduleKey && !p.modulesDone.includes(moduleKey) ? [...p.modulesDone, moduleKey] : p.modulesDone
-  return { ...p, xp: p.xp + lessonXp(correct, total), streak: bumpStreak(p.streak, today), modulesDone }
+  const lessonsDone = lessonKey && !p.lessonsDone.includes(lessonKey) ? [...p.lessonsDone, lessonKey] : p.lessonsDone
+  return { ...p, xp: p.xp + lessonXp(correct, total), streak: bumpStreak(p.streak, today), lessonsDone }
 }
 
 /** Up to `size` question ids for a lesson: never-seen and low-box questions first, ties shuffled. */

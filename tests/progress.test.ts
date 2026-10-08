@@ -14,7 +14,7 @@ import {
   recordReview,
 } from '../src/features/progress/store'
 
-const EMPTY = { answers: {}, sectionsRead: {}, xp: 0, streak: { count: 0, lastDay: '' }, boxes: {}, modulesDone: [] }
+const EMPTY = { answers: {}, sectionsRead: {}, xp: 0, streak: { count: 0, lastDay: '' }, boxes: {}, lessonsDone: [] }
 
 describe('progress store helpers', () => {
   it('parses missing or corrupt storage as empty progress', () => {
@@ -28,8 +28,8 @@ describe('progress store helpers', () => {
   })
 
   it('ignores wrongly typed lesson fields', () => {
-    expect(parseProgress(JSON.stringify({ xp: 'lots', streak: [], boxes: null, modulesDone: 'x' }))).toEqual(EMPTY)
-    expect(parseProgress(JSON.stringify({ modulesDone: ['a/b', 3] })).modulesDone).toEqual(['a/b'])
+    expect(parseProgress(JSON.stringify({ xp: 'lots', streak: [], boxes: null, lessonsDone: 'x' }))).toEqual(EMPTY)
+    expect(parseProgress(JSON.stringify({ lessonsDone: ['a/b/c', 3] })).lessonsDone).toEqual(['a/b/c'])
   })
 
   it('records the latest answer per question without mutating', () => {
@@ -73,24 +73,25 @@ describe('lesson helpers', () => {
     expect(currentStreak({ count: 0, lastDay: '' }, '2026-10-04')).toBe(0)
   })
 
-  it('gives XP per correct answer plus a perfect-lesson bonus', () => {
-    expect(lessonXp(0, 5)).toBe(0)
-    expect(lessonXp(3, 5)).toBe(30)
-    expect(lessonXp(5, 5)).toBe(70)
+  it('gives base XP, XP per correct answer and a perfect-lesson bonus', () => {
+    expect(lessonXp(0, 5)).toBe(5)
+    expect(lessonXp(3, 5)).toBe(35)
+    expect(lessonXp(5, 5)).toBe(75)
+    expect(lessonXp(0, 0)).toBe(5) // reading-only lesson: base XP, no perfect bonus
   })
 
   it('completes a lesson: adds XP and bumps the streak', () => {
     const p = completeLesson(parseProgress(null), 4, 5, '2026-10-06')
-    expect(p.xp).toBe(40)
+    expect(p.xp).toBe(45)
     expect(p.streak).toEqual({ count: 1, lastDay: '2026-10-06' })
-    expect(completeLesson(p, 5, 5, '2026-10-06').xp).toBe(110)
+    expect(completeLesson(p, 5, 5, '2026-10-06').xp).toBe(120)
   })
 
-  it('marks the lesson module done once', () => {
-    const p = completeLesson(parseProgress(null), 1, 2, '2026-10-06', 'tech-interview/resume')
-    expect(p.modulesDone).toEqual(['tech-interview/resume'])
-    expect(completeLesson(p, 2, 2, '2026-10-07', 'tech-interview/resume').modulesDone).toBe(p.modulesDone)
-    expect(completeLesson(p, 2, 2, '2026-10-07').modulesDone).toEqual(['tech-interview/resume'])
+  it('marks a roadmap lesson done once', () => {
+    const p = completeLesson(parseProgress(null), 1, 2, '2026-10-06', 'tech-interview/resume/template')
+    expect(p.lessonsDone).toEqual(['tech-interview/resume/template'])
+    expect(completeLesson(p, 2, 2, '2026-10-07', 'tech-interview/resume/template').lessonsDone).toBe(p.lessonsDone)
+    expect(completeLesson(p, 2, 2, '2026-10-07').lessonsDone).toEqual(['tech-interview/resume/template'])
   })
 
   it('moves Leitner boxes up on a right answer (capped) and back to 1 on a wrong one', () => {

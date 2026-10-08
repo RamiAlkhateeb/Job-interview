@@ -159,24 +159,29 @@ export function useLessonKeys(opts: {
   }, [opts.enabled])
 }
 
-/** End screen: score, XP earned, streak. */
+/** End screen: score (if the lesson asked anything), XP earned, streak, then the main action, an optional
+ *  second one and a way back to the course. */
 export function LessonSummary({
   courseId,
   correct,
   total,
-  againLabel,
-  onAgain,
+  action,
+  onAction,
+  secondary,
+  onSecondary,
 }: {
   courseId: string
   correct: number
   total: number
-  againLabel: string
-  onAgain: () => void
+  action: string
+  onAction: () => void
+  secondary?: string
+  onSecondary?: () => void
 }) {
   const { t: tUi } = useTranslation()
   const { progress } = useProgress()
   const streak = currentStreak(progress.streak, localDay())
-  const perfect = correct === total
+  const perfect = total > 0 && correct === total
 
   useEffect(() => playSound('complete'), [])
 
@@ -187,12 +192,14 @@ export function LessonSummary({
       </div>
       <h1>{perfect ? tUi('lessonPerfect') : tUi('lessonComplete')}</h1>
       <div className={styles.stats}>
-        <div className={styles.stat}>
-          <span className={styles.statLabel}>{tUi('lessonScore')}</span>
-          <span className={styles.statValue}>
-            {correct}/{total}
-          </span>
-        </div>
+        {total > 0 && (
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>{tUi('lessonScore')}</span>
+            <span className={styles.statValue}>
+              {correct}/{total}
+            </span>
+          </div>
+        )}
         <div className={`${styles.stat} ${styles.statXp}`}>
           <span className={styles.statLabel}>{tUi('lessonXpEarned')}</span>
           <span className={styles.statValue}>+{lessonXp(correct, total)}</span>
@@ -203,9 +210,14 @@ export function LessonSummary({
         </div>
       </div>
       <div className={styles.actions}>
-        <button type="button" className={styles.primary} onClick={onAgain}>
-          {againLabel}
+        <button type="button" className={styles.primary} onClick={onAction} autoFocus>
+          {action}
         </button>
+        {secondary && onSecondary && (
+          <button type="button" className={styles.secondary} onClick={onSecondary}>
+            {secondary}
+          </button>
+        )}
         <Link className={styles.secondary} to={`/course/${courseId}`}>
           {tUi('backToCourse')}
         </Link>
